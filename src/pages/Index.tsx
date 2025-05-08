@@ -26,7 +26,7 @@ const Index = () => {
           trend={{ value: 12, isPositive: true }}
         />
         <StatsCard
-          title="Profile Views"
+          title="Total Job Views"
           value="2,340"
           icon={<Eye className="h-5 w-5" />}
           trend={{ value: 5, isPositive: true }}

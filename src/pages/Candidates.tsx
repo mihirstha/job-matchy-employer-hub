@@ -1,10 +1,14 @@
 
+import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { Users, Star, Calendar, Heart } from "lucide-react";
+import { Users, Star, Calendar, Heart, Eye } from "lucide-react";
 import { CandidatesList } from "@/components/candidates/CandidatesList";
+import { CandidateProfile } from "@/components/candidates/CandidateProfile";
 
 const Candidates = () => {
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
+  
   return (
     <DashboardLayout>
       <h1 className="mb-8 text-2xl font-bold text-secondary-700">Candidates</h1>
@@ -29,14 +33,22 @@ const Candidates = () => {
           icon={<Calendar className="h-5 w-5" />}
         />
         <StatsCard
-          title="Saved Candidates"
-          value="36"
-          icon={<Heart className="h-5 w-5" />}
+          title="Job Views"
+          value="2,567"
+          icon={<Eye className="h-5 w-5" />}
+          trend={{ value: 15, isPositive: true }}
         />
       </div>
       
-      {/* Candidates List */}
-      <CandidatesList />
+      {selectedCandidateId ? (
+        <CandidateProfile 
+          candidateId={selectedCandidateId} 
+          onBack={() => setSelectedCandidateId(null)} 
+        />
+      ) : (
+        /* Candidates List */
+        <CandidatesList onViewProfile={setSelectedCandidateId} />
+      )}
     </DashboardLayout>
   );
 };

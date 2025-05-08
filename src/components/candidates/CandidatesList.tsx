@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Search, Heart, Calendar } from "lucide-react";
+import { Search, Heart, Calendar, Video, ThumbsUp, ThumbsDown, Star, Eye } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 type Candidate = {
   id: string;
@@ -31,11 +32,17 @@ type Candidate = {
   appliedDate: string;
   status: "new" | "shortlisted" | "interviewed" | "offered" | "rejected";
   avatar?: string;
+  hasVideo?: boolean;
 };
 
-export function CandidatesList() {
+interface CandidatesListProps {
+  onViewProfile: (id: string) => void;
+}
+
+export function CandidatesList({ onViewProfile }: CandidatesListProps) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const { toast } = useToast();
   
   // Mock data for candidates
   const candidates: Candidate[] = [
@@ -51,6 +58,7 @@ export function CandidatesList() {
       appliedDate: "2025-05-01",
       status: "shortlisted",
       avatar: "https://i.pravatar.cc/150?img=1",
+      hasVideo: true,
     },
     {
       id: "2",
@@ -64,6 +72,7 @@ export function CandidatesList() {
       appliedDate: "2025-05-02",
       status: "new",
       avatar: "https://i.pravatar.cc/150?img=2",
+      hasVideo: false,
     },
     {
       id: "3",
@@ -77,6 +86,7 @@ export function CandidatesList() {
       appliedDate: "2025-05-03",
       status: "interviewed",
       avatar: "https://i.pravatar.cc/150?img=3",
+      hasVideo: true,
     },
     {
       id: "4",
@@ -90,6 +100,7 @@ export function CandidatesList() {
       appliedDate: "2025-05-04",
       status: "new",
       avatar: "https://i.pravatar.cc/150?img=4",
+      hasVideo: true,
     },
     {
       id: "5",
@@ -103,6 +114,7 @@ export function CandidatesList() {
       appliedDate: "2025-05-01",
       status: "rejected",
       avatar: "https://i.pravatar.cc/150?img=5",
+      hasVideo: false,
     }
   ];
   
@@ -131,6 +143,45 @@ export function CandidatesList() {
         return <Badge variant="destructive">Rejected</Badge>;
       default:
         return null;
+    }
+  };
+
+  // Handle candidate actions
+  const handleCandidateAction = (id: string, action: string) => {
+    const candidate = candidates.find(c => c.id === id);
+    if (!candidate) return;
+
+    switch (action) {
+      case "shortlist":
+        toast({
+          title: "Candidate Shortlisted",
+          description: `${candidate.name} has been added to your shortlist.`,
+        });
+        break;
+      case "reject":
+        toast({
+          title: "Candidate Rejected",
+          description: `${candidate.name} has been marked as rejected.`,
+        });
+        break;
+      case "save":
+        toast({
+          title: "Candidate Saved",
+          description: `${candidate.name} has been saved to your favorites.`,
+        });
+        break;
+      case "schedule":
+        toast({
+          title: "Interview Scheduling",
+          description: `You can now schedule an interview with ${candidate.name}.`,
+        });
+        break;
+      case "video":
+        toast({
+          title: "Video Resume",
+          description: `Now playing ${candidate.name}'s video resume.`,
+        });
+        break;
     }
   };
   
@@ -193,6 +244,13 @@ export function CandidatesList() {
                         <span>{candidate.location}</span>
                         <span className="mx-2">•</span>
                         <span>{candidate.experience}</span>
+                        {candidate.hasVideo && (
+                          <>
+                            <span className="mx-2">•</span>
+                            <Video className="h-3 w-3 text-primary" />
+                            <span className="ml-1 text-primary">Video Resume</span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -223,14 +281,56 @@ export function CandidatesList() {
                   </div>
                 </div>
                 
-                <div className="flex justify-end mt-4 gap-2">
-                  <Button variant="outline" size="sm">
+                <div className="flex flex-wrap justify-end mt-4 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleCandidateAction(candidate.id, "save")}
+                  >
                     <Heart className="mr-1 h-4 w-4" /> Save
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Calendar className="mr-1 h-4 w-4" /> Schedule Interview
+                  
+                  {candidate.hasVideo && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-primary border-primary hover:bg-primary/10"
+                      onClick={() => handleCandidateAction(candidate.id, "video")}
+                    >
+                      <Video className="mr-1 h-4 w-4" /> View Video
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleCandidateAction(candidate.id, "schedule")}
+                  >
+                    <Calendar className="mr-1 h-4 w-4" /> Schedule
                   </Button>
-                  <Button size="sm">View Profile</Button>
+                  
+                  <Button
+                    size="sm"
+                    className="bg-blue-500 hover:bg-blue-600"
+                    onClick={() => handleCandidateAction(candidate.id, "shortlist")}
+                  >
+                    <Star className="mr-1 h-4 w-4" /> Shortlist
+                  </Button>
+                  
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleCandidateAction(candidate.id, "reject")}
+                  >
+                    <ThumbsDown className="mr-1 h-4 w-4" /> Reject
+                  </Button>
+                  
+                  <Button 
+                    size="sm"
+                    onClick={() => onViewProfile(candidate.id)}
+                  >
+                    <Eye className="mr-1 h-4 w-4" /> View Profile
+                  </Button>
                 </div>
               </div>
             ))

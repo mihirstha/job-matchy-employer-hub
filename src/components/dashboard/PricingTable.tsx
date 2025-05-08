@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ interface PricingFeature {
 interface ExtraService {
   name: string;
   description: string;
+  detailedDescription: string;
 }
 
 export function PricingTable() {
@@ -80,14 +80,17 @@ export function PricingTable() {
     {
       name: "Manual Human Resource Introduction",
       description: "Contact one of our representatives",
+      detailedDescription: "With Manual HR Introduction, JOB MATCHY Nepal handpicks and connects you with potential candidates based on your specific job requirements. Once introduced, you can take over—conduct interviews, discuss terms, and make hiring decisions using your preferred communication tools."
     },
     {
       name: "Consulting Service",
       description: "Contact one of our representatives",
+      detailedDescription: "Our HR Consulting Services help you optimize your recruitment strategy, job descriptions, and candidate screening process. JOB MATCHY Nepal provides expert guidance tailored to your industry needs—ensuring you hire smarter and build a stronger workforce."
     },
     {
       name: "Advertisement",
       description: "Contact one of our representatives",
+      detailedDescription: "Boost your employer brand visibility with our Advertisement services. JOB MATCHY Nepal offers targeted advertising solutions to showcase your company culture and job opportunities to a wider audience of qualified candidates, helping you stand out in a competitive job market and attract top talent faster."
     },
   ];
 
@@ -278,7 +281,7 @@ export function PricingTable() {
               </AccordionTrigger>
               <AccordionContent className="px-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-600 mb-4">{service.description}</p>
+                  <p className="text-gray-600 mb-4">{service.detailedDescription}</p>
                   <Button variant="outline">
                     Contact Us for Details
                   </Button>
