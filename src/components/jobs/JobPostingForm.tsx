@@ -89,9 +89,9 @@ export function JobPostingForm({ onCancel, onSuccess }: JobPostingFormProps) {
         </CardDescription>
       </CardHeader>
       
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="details">Job Details</TabsTrigger>
@@ -385,10 +385,9 @@ export function JobPostingForm({ onCancel, onSuccess }: JobPostingFormProps) {
                 </div>
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </form>
-      </Form>
-    </CardContent>
-  </Card>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
