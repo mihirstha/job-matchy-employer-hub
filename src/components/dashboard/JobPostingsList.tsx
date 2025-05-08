@@ -23,7 +23,11 @@ interface JobPosting {
   expiryDate: string;
 }
 
-export function JobPostingsList() {
+interface JobPostingsListProps {
+  onNewJobClick?: () => void;
+}
+
+export function JobPostingsList({ onNewJobClick }: JobPostingsListProps) {
   const jobs: JobPosting[] = [
     {
       id: "1",
@@ -98,7 +102,7 @@ export function JobPostingsList() {
     <div className="rounded-lg border bg-white shadow-sm">
       <div className="flex items-center justify-between border-b p-4">
         <h3 className="text-lg font-semibold">Your Job Postings</h3>
-        <Button className="bg-primary hover:bg-primary-700">
+        <Button className="bg-primary hover:bg-primary-700" onClick={onNewJobClick}>
           New Job Post
         </Button>
       </div>

@@ -12,6 +12,11 @@ const Jobs = () => {
   const [showNewJobForm, setShowNewJobForm] = useState(false);
   const { toast } = useToast();
 
+  const handleNewJobClick = () => {
+    setShowNewJobForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-8">
@@ -62,7 +67,7 @@ const Jobs = () => {
           </div>
           
           {/* Job Listings */}
-          <JobPostingsList />
+          <JobPostingsList onNewJobClick={handleNewJobClick} />
         </>
       )}
     </DashboardLayout>
