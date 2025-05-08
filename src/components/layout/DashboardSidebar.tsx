@@ -42,7 +42,13 @@ export function DashboardSidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 border-r bg-white h-screen fixed top-0 left-0">
       <div className="p-6">
-        <h2 className="text-2xl font-bold text-secondary-600">Job Matchy Nepal</h2>
+        <Link to="/">
+          <img 
+            src="/lovable-uploads/7878653a-ce16-48ca-bb79-dcf11aba104a.png" 
+            alt="Job Matchy Nepal Logo" 
+            className="h-12 mx-auto"
+          />
+        </Link>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         <SidebarItem 
