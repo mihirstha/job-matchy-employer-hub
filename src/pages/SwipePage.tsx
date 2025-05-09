@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X, Check, Heart, Filter, ArrowRight, ArrowLeft } from "lucide-react";
+import { MessageSquare, X, Check, Filter, ArrowRight, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
@@ -205,7 +205,7 @@ const FilterDialog = ({ isOpen, onClose, onApplyFilters }) => {
   );
 };
 
-const CandidateDetailDialog = ({ candidate, isOpen, onClose }) => {
+const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
   if (!candidate) return null;
   
   return (
@@ -221,7 +221,9 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose }) => {
               alt={candidate.name} 
               className="w-24 h-24 rounded-full object-cover" 
             />
-            <h2 className="text-xl font-bold mt-2">{candidate.name}</h2>
+            <h2 className={`text-xl font-bold mt-2 ${!isMatched ? 'blur-sm select-none' : ''}`}>
+              {isMatched ? candidate.name : "Candidate Name"}
+            </h2>
             <p className="text-gray-600">{candidate.jobTitle}</p>
           </div>
           
@@ -280,12 +282,20 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose }) => {
   );
 };
 
-const SwipeCard = ({ candidate, onSwipe, onViewDetails }: { candidate: any; onSwipe: (direction: string) => void; onViewDetails: () => void }) => {
+const SwipeCard = ({ 
+  candidate, 
+  onSwipe, 
+  onViewDetails, 
+  isMatched 
+}: { 
+  candidate: any; 
+  onSwipe: (direction: string) => void; 
+  onViewDetails: () => void; 
+  isMatched: boolean;
+}) => {
   const cardX = useMotionValue(0);
   const rotate = useTransform(cardX, [-200, 200], [-30, 30]);
   const cardOpacity = useTransform(cardX, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
-  const likeOpacity = useTransform(cardX, [0, 100, 200], [0, 0.5, 1]);
-  const nopeOpacity = useTransform(cardX, [-200, -100, 0], [1, 0.5, 0]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (info.offset.x > 100) {
@@ -316,25 +326,21 @@ const SwipeCard = ({ candidate, onSwipe, onViewDetails }: { candidate: any; onSw
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           
-          {/* Like indicator */}
-          <motion.div 
-            className="absolute top-5 right-5 bg-green-500 text-white font-bold py-2 px-8 rounded-lg border-2 border-white rotate-12 shadow-lg"
-            style={{ opacity: likeOpacity }}
-          >
-            SHORTLISTED
-          </motion.div>
-          
-          {/* Nope indicator */}
-          <motion.div 
-            className="absolute top-5 left-5 bg-red-500 text-white font-bold py-2 px-8 rounded-lg border-2 border-white -rotate-12 shadow-lg"
-            style={{ opacity: nopeOpacity }}
-          >
-            REJECTED
-          </motion.div>
+          {/* Action buttons overlayed on the card */}
+          <div className="absolute top-1/2 left-0 right-0 flex justify-between px-6 pointer-events-none">
+            <div className="bg-white rounded-full p-3 shadow-lg opacity-80">
+              <X className="h-8 w-8 text-red-500" />
+            </div>
+            <div className="bg-white rounded-full p-3 shadow-lg opacity-80">
+              <Check className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
           
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold">{candidate.name}</h2>
+              <h2 className={`text-2xl font-bold ${!isMatched ? 'blur-sm select-none' : ''}`}>
+                {isMatched ? candidate.name : "Candidate"}
+              </h2>
               <span className="text-xl font-medium">{candidate.age}</span>
             </div>
             <p className="text-lg font-medium mb-1">{candidate.jobTitle}</p>
@@ -442,6 +448,11 @@ const SwipePage = () => {
     });
   };
   
+  // Check if candidate is matched (shortlisted)
+  const isMatched = (candidateId) => {
+    return swipedCandidates[candidateId] === "right";
+  };
+  
   const handleSwipe = (direction: string) => {
     if (currentCardIndex < candidates.length) {
       const candidateId = candidates[currentCardIndex].id;
@@ -454,7 +465,7 @@ const SwipePage = () => {
       if (direction === "right") {
         toast({
           title: "Candidate Shortlisted!",
-          description: `You've shortlisted ${candidates[currentCardIndex].name}.`,
+          description: `You've shortlisted ${isMatched(candidateId) ? candidates[currentCardIndex].name : 'a candidate'}.`,
         });
         
         // Here we would normally update a backend database to mark this candidate as shortlisted
@@ -488,8 +499,8 @@ const SwipePage = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col items-center min-h-[80vh] pt-4 pb-20 max-w-lg mx-auto px-4">
-        {/* Header with Logo and Filter */}
-        <div className="w-full flex justify-between items-center mb-6">
+        {/* Header with Logo and Filter - Always visible at top */}
+        <div className="w-full flex justify-between items-center mb-6 sticky top-0 z-10 bg-white py-2">
           <div className="inline-flex items-center gap-2">
             <img 
               src="/logo.png" 
@@ -516,7 +527,7 @@ const SwipePage = () => {
 
         {/* Current filters display */}
         {filters && (
-          <div className="w-full mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="w-full mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200 z-10 relative">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Active Filters</span>
               <Button 
@@ -565,6 +576,7 @@ const SwipePage = () => {
               candidate={candidates[currentCardIndex]} 
               onSwipe={handleSwipe}
               onViewDetails={() => setIsDetailOpen(true)}
+              isMatched={isMatched(candidates[currentCardIndex].id)}
             />
           ) : (
             <div className="text-center p-8 border-2 border-dashed border-gray-300 rounded-lg bg-white">
@@ -624,11 +636,14 @@ const SwipePage = () => {
       />
       
       {/* Candidate Detail Dialog */}
-      <CandidateDetailDialog 
-        candidate={currentCandidate} 
-        isOpen={isDetailOpen} 
-        onClose={() => setIsDetailOpen(false)} 
-      />
+      {currentCandidate && (
+        <CandidateDetailDialog 
+          candidate={currentCandidate} 
+          isOpen={isDetailOpen} 
+          onClose={() => setIsDetailOpen(false)}
+          isMatched={isMatched(currentCandidate.id)}
+        />
+      )}
     </DashboardLayout>
   );
 };
