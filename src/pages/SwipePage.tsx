@@ -4,14 +4,20 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X, Check, Heart } from "lucide-react";
+import { MessageSquare, X, Check, Heart, Filter, ArrowRight, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Avatar } from "@/components/ui/avatar";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Sample candidates data
-const candidates = [
+const allCandidates = [
   {
     id: "1",
     name: "Rahul Patel",
@@ -21,7 +27,10 @@ const candidates = [
     age: 28,
     gender: "Male",
     experience: "5 years",
-    skills: ["React", "JavaScript", "CSS"],
+    education: "Bachelor in Computer Science, Tribhuvan University",
+    preferredIndustry: "Technology",
+    salary: "Rs. 80,000 - 120,000",
+    skills: ["React", "JavaScript", "CSS", "TypeScript", "Redux"],
     bio: "Passionate about creating beautiful user interfaces and delivering exceptional user experiences.",
   },
   {
@@ -33,7 +42,10 @@ const candidates = [
     age: 25,
     gender: "Female",
     experience: "3 years",
-    skills: ["Figma", "Adobe XD", "Sketch"],
+    education: "Master's in Design, Kathmandu University",
+    preferredIndustry: "Creative Agency",
+    salary: "Rs. 70,000 - 100,000",
+    skills: ["Figma", "Adobe XD", "Sketch", "User Research", "Prototyping"],
     bio: "Creative designer with a keen eye for aesthetics and user-centered approach to design.",
   },
   {
@@ -45,7 +57,10 @@ const candidates = [
     age: 30,
     gender: "Male",
     experience: "4 years",
-    skills: ["Node.js", "MongoDB", "React"],
+    education: "Bachelor in Information Technology, Purwanchal University",
+    preferredIndustry: "Fintech",
+    salary: "Rs. 90,000 - 130,000",
+    skills: ["Node.js", "MongoDB", "React", "Express", "AWS"],
     bio: "Problem solver who enjoys building complete web applications from frontend to backend.",
   },
   {
@@ -57,7 +72,10 @@ const candidates = [
     age: 27,
     gender: "Female",
     experience: "2 years",
-    skills: ["Python", "Django", "PostgreSQL"],
+    education: "Bachelor in Computer Engineering, Pulchowk Engineering Campus",
+    preferredIndustry: "E-commerce",
+    salary: "Rs. 75,000 - 95,000",
+    skills: ["Python", "Django", "PostgreSQL", "Docker", "Git"],
     bio: "Backend specialist focused on creating robust and scalable server solutions.",
   },
   {
@@ -69,12 +87,200 @@ const candidates = [
     age: 29,
     gender: "Male",
     experience: "3 years",
-    skills: ["Flutter", "Dart", "Firebase"],
+    education: "Bachelor in Electronics and Communication, IOE",
+    preferredIndustry: "Mobile Technology",
+    salary: "Rs. 85,000 - 115,000",
+    skills: ["Flutter", "Dart", "Firebase", "iOS", "Android"],
     bio: "Mobile application developer with experience in creating cross-platform solutions.",
   },
 ];
 
-const SwipeCard = ({ candidate, onSwipe }: { candidate: any; onSwipe: (direction: string) => void }) => {
+const FilterDialog = ({ isOpen, onClose, onApplyFilters }) => {
+  const [jobTitle, setJobTitle] = useState("");
+  const [location, setLocation] = useState("");
+  const [minExperience, setMinExperience] = useState("");
+  const [gender, setGender] = useState("");
+  const [skills, setSkills] = useState([]);
+  
+  const handleApply = () => {
+    onApplyFilters({
+      jobTitle,
+      location,
+      minExperience: minExperience ? parseInt(minExperience) : 0,
+      gender,
+      skills
+    });
+    onClose();
+  };
+  
+  const skillOptions = ["React", "JavaScript", "Python", "Flutter", "UI/UX", "Node.js", "MongoDB", "Firebase"];
+  
+  const toggleSkill = (skill) => {
+    if (skills.includes(skill)) {
+      setSkills(skills.filter(s => s !== skill));
+    } else {
+      setSkills([...skills, skill]);
+    }
+  };
+  
+  return (
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle>Filter Candidates</SheetTitle>
+          <SheetDescription>
+            Customize your candidate search with these filters
+          </SheetDescription>
+        </SheetHeader>
+        
+        <div className="space-y-4 mt-6">
+          <div className="space-y-2">
+            <Label htmlFor="jobTitle">Job Title</Label>
+            <Input 
+              id="jobTitle" 
+              placeholder="e.g. Frontend Developer" 
+              value={jobTitle} 
+              onChange={(e) => setJobTitle(e.target.value)} 
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input 
+              id="location" 
+              placeholder="e.g. Kathmandu" 
+              value={location} 
+              onChange={(e) => setLocation(e.target.value)} 
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="experience">Minimum Experience (Years)</Label>
+            <Input 
+              id="experience" 
+              type="number" 
+              placeholder="e.g. 2" 
+              value={minExperience} 
+              onChange={(e) => setMinExperience(e.target.value)} 
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="gender">Gender</Label>
+            <Select value={gender} onValueChange={setGender}>
+              <SelectTrigger id="gender">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Any</SelectItem>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label>Skills</Label>
+            <div className="grid grid-cols-2 gap-2 mt-1">
+              {skillOptions.map(skill => (
+                <div key={skill} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`skill-${skill}`} 
+                    checked={skills.includes(skill)} 
+                    onCheckedChange={() => toggleSkill(skill)}
+                  />
+                  <label htmlFor={`skill-${skill}`} className="text-sm">{skill}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <Button onClick={handleApply} className="w-full mt-4">
+            Apply Filters
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+const CandidateDetailDialog = ({ candidate, isOpen, onClose }) => {
+  if (!candidate) return null;
+  
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md max-h-screen overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Candidate Profile</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 mt-2">
+          <div className="flex flex-col items-center">
+            <img 
+              src={candidate.photo} 
+              alt={candidate.name} 
+              className="w-24 h-24 rounded-full object-cover" 
+            />
+            <h2 className="text-xl font-bold mt-2">{candidate.name}</h2>
+            <p className="text-gray-600">{candidate.jobTitle}</p>
+          </div>
+          
+          <div className="grid gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Location</h3>
+              <p>{candidate.location}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Experience</h3>
+              <p>{candidate.experience}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Preferred Industry</h3>
+              <p>{candidate.preferredIndustry}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Education</h3>
+              <p>{candidate.education}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Expected Salary</h3>
+              <p>{candidate.salary}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Skills</h3>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {candidate.skills.map((skill, index) => (
+                  <Badge key={index} variant="outline" className="bg-primary-50 text-primary border-primary">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Bio</h3>
+              <p className="text-sm">{candidate.bio}</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-2 pt-4 border-t">
+            <Button onClick={onClose} variant="outline" className="flex-1">Close</Button>
+            <Button className="flex-1 bg-blue-500 hover:bg-blue-600">
+              <MessageSquare className="h-4 w-4 mr-2" /> Message
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const SwipeCard = ({ candidate, onSwipe, onViewDetails }: { candidate: any; onSwipe: (direction: string) => void; onViewDetails: () => void }) => {
   const cardX = useMotionValue(0);
   const rotate = useTransform(cardX, [-200, 200], [-30, 30]);
   const cardOpacity = useTransform(cardX, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
@@ -99,7 +305,10 @@ const SwipeCard = ({ candidate, onSwipe }: { candidate: any; onSwipe: (direction
       whileTap={{ scale: 1.05 }}
     >
       <Card className="overflow-hidden bg-white rounded-3xl shadow-xl border-0">
-        <div className="relative">
+        <div 
+          className="relative cursor-pointer"
+          onClick={onViewDetails}
+        >
           <img
             src={candidate.photo}
             alt={candidate.name}
@@ -109,18 +318,18 @@ const SwipeCard = ({ candidate, onSwipe }: { candidate: any; onSwipe: (direction
           
           {/* Like indicator */}
           <motion.div 
-            className="absolute top-5 right-5 bg-green-500 text-white font-bold py-2 px-4 rounded-lg border-2 border-white rotate-12"
+            className="absolute top-5 right-5 bg-green-500 text-white font-bold py-2 px-8 rounded-lg border-2 border-white rotate-12 shadow-lg"
             style={{ opacity: likeOpacity }}
           >
-            LIKE
+            SHORTLISTED
           </motion.div>
           
           {/* Nope indicator */}
           <motion.div 
-            className="absolute top-5 left-5 bg-red-500 text-white font-bold py-2 px-4 rounded-lg border-2 border-white -rotate-12"
+            className="absolute top-5 left-5 bg-red-500 text-white font-bold py-2 px-8 rounded-lg border-2 border-white -rotate-12 shadow-lg"
             style={{ opacity: nopeOpacity }}
           >
-            NOPE
+            REJECTED
           </motion.div>
           
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -154,13 +363,13 @@ const SwipeCard = ({ candidate, onSwipe }: { candidate: any; onSwipe: (direction
           <div className="grid grid-cols-2 gap-3 mt-4">
             <Button 
               variant="outline" 
-              className="rounded-full border-2 border-red-500 text-red-500 hover:bg-red-50"
+              className="rounded-full border-2 border-red-500 text-red-500 hover:bg-red-50 font-medium"
               onClick={() => onSwipe("left")}
             >
               <X className="h-5 w-5 mr-1" /> Reject
             </Button>
             <Button 
-              className="rounded-full bg-green-500 hover:bg-green-600 text-white"
+              className="rounded-full bg-green-500 hover:bg-green-600 text-white font-medium"
               onClick={() => onSwipe("right")}
             >
               <Check className="h-5 w-5 mr-1" /> Shortlist
@@ -175,14 +384,71 @@ const SwipeCard = ({ candidate, onSwipe }: { candidate: any; onSwipe: (direction
 const SwipePage = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [swipedCandidates, setSwipedCandidates] = useState<Record<string, string>>({});
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [candidates, setCandidates] = useState(allCandidates);
+  const [filters, setFilters] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // Apply filters function
+  const applyFilters = (filterOptions) => {
+    setFilters(filterOptions);
+    
+    // Filter candidates based on the selected filters
+    const filteredCandidates = allCandidates.filter(candidate => {
+      // Job Title filter
+      if (filterOptions.jobTitle && !candidate.jobTitle.toLowerCase().includes(filterOptions.jobTitle.toLowerCase())) {
+        return false;
+      }
+      
+      // Location filter
+      if (filterOptions.location && !candidate.location.toLowerCase().includes(filterOptions.location.toLowerCase())) {
+        return false;
+      }
+      
+      // Experience filter - parse the years from the experience string
+      if (filterOptions.minExperience > 0) {
+        const candidateYears = parseInt(candidate.experience.split(' ')[0]);
+        if (candidateYears < filterOptions.minExperience) {
+          return false;
+        }
+      }
+      
+      // Gender filter
+      if (filterOptions.gender && candidate.gender !== filterOptions.gender) {
+        return false;
+      }
+      
+      // Skills filter - check if candidate has any of the selected skills
+      if (filterOptions.skills.length > 0) {
+        const hasMatchingSkill = candidate.skills.some(skill => 
+          filterOptions.skills.includes(skill)
+        );
+        if (!hasMatchingSkill) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    setCandidates(filteredCandidates);
+    setCurrentCardIndex(0);
+    
+    toast({
+      title: "Filters Applied",
+      description: `Found ${filteredCandidates.length} candidates matching your criteria.`,
+    });
+  };
+  
   const handleSwipe = (direction: string) => {
     if (currentCardIndex < candidates.length) {
+      const candidateId = candidates[currentCardIndex].id;
+      
       setSwipedCandidates({
         ...swipedCandidates,
-        [candidates[currentCardIndex].id]: direction
+        [candidateId]: direction
       });
       
       if (direction === "right") {
@@ -190,6 +456,9 @@ const SwipePage = () => {
           title: "Candidate Shortlisted!",
           description: `You've shortlisted ${candidates[currentCardIndex].name}.`,
         });
+        
+        // Here we would normally update a backend database to mark this candidate as shortlisted
+        console.log(`Shortlisted candidate ${candidateId}`);
       }
       
       // Move to next card
@@ -203,11 +472,24 @@ const SwipePage = () => {
     navigate("/payment");
   };
   
+  const resetFilters = () => {
+    setCandidates(allCandidates);
+    setFilters(null);
+    setCurrentCardIndex(0);
+    
+    toast({
+      title: "Filters Reset",
+      description: "Showing all available candidates.",
+    });
+  };
+  
+  const currentCandidate = candidates[currentCardIndex];
+  
   return (
     <DashboardLayout>
       <div className="flex flex-col items-center min-h-[80vh] pt-4 pb-20 max-w-lg mx-auto px-4">
-        {/* Logo */}
-        <div className="w-full text-center mb-8">
+        {/* Header with Logo and Filter */}
+        <div className="w-full flex justify-between items-center mb-6">
           <div className="inline-flex items-center gap-2">
             <img 
               src="/logo.png" 
@@ -220,14 +502,69 @@ const SwipePage = () => {
             />
             <span className="font-bold text-xl text-primary">Job Matchy</span>
           </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-1"
+            onClick={() => setIsFilterOpen(true)}
+          >
+            <Filter className="h-4 w-4" />
+            {filters ? "Filtered" : "Filter"}
+          </Button>
         </div>
+
+        {/* Current filters display */}
+        {filters && (
+          <div className="w-full mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Active Filters</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-xs"
+                onClick={resetFilters}
+              >
+                Reset
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {filters.jobTitle && (
+                <Badge variant="secondary" className="text-xs">
+                  Position: {filters.jobTitle}
+                </Badge>
+              )}
+              {filters.location && (
+                <Badge variant="secondary" className="text-xs">
+                  Location: {filters.location}
+                </Badge>
+              )}
+              {filters.minExperience > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  Experience: ≥{filters.minExperience} years
+                </Badge>
+              )}
+              {filters.gender && (
+                <Badge variant="secondary" className="text-xs">
+                  Gender: {filters.gender}
+                </Badge>
+              )}
+              {filters.skills.length > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  Skills: {filters.skills.length} selected
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Swipe Area */}
         <div className="relative w-full h-[60vh] flex items-center justify-center">
           {currentCardIndex < candidates.length ? (
             <SwipeCard 
               candidate={candidates[currentCardIndex]} 
-              onSwipe={handleSwipe} 
+              onSwipe={handleSwipe}
+              onViewDetails={() => setIsDetailOpen(true)}
             />
           ) : (
             <div className="text-center p-8 border-2 border-dashed border-gray-300 rounded-lg bg-white">
@@ -241,21 +578,21 @@ const SwipePage = () => {
         </div>
         
         {/* Action Buttons */}
-        <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-4 z-10 md:relative md:bottom-0 md:mt-10">
+        <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-6 z-10 md:relative md:bottom-0 md:mt-10">
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-red-500 text-red-500 hover:bg-red-50 flex items-center justify-center p-0"
+            className="rounded-full h-16 w-16 border-2 border-red-500 text-red-500 hover:bg-red-50 flex items-center justify-center p-0 shadow-lg"
             onClick={() => handleSwipe("left")}
             disabled={currentCardIndex >= candidates.length}
           >
-            <X className="h-8 w-8" />
+            <ArrowLeft className="h-8 w-8" />
           </Button>
           
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-blue-500 text-blue-500 hover:bg-blue-50 flex items-center justify-center p-0"
+            className="rounded-full h-16 w-16 border-2 border-blue-500 text-blue-500 hover:bg-blue-50 flex items-center justify-center p-0 shadow-lg"
             onClick={handleSendMessage}
             disabled={currentCardIndex >= candidates.length}
           >
@@ -264,19 +601,34 @@ const SwipePage = () => {
           
           <Button
             size="lg"
-            className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white flex items-center justify-center p-0"
+            className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white flex items-center justify-center p-0 shadow-lg"
             onClick={() => handleSwipe("right")}
             disabled={currentCardIndex >= candidates.length}
           >
-            <Heart className="h-8 w-8" />
+            <ArrowRight className="h-8 w-8" />
           </Button>
         </div>
         
         {/* Match Counter */}
-        <div className="mt-4 text-sm text-gray-500">
-          {Object.values(swipedCandidates).filter(dir => dir === "right").length} Matches
+        <div className="mt-6 text-sm font-medium text-gray-700 flex items-center gap-1">
+          <span className="text-green-600 font-bold text-xl">{Object.values(swipedCandidates).filter(dir => dir === "right").length}</span> 
+          <span>Candidates Shortlisted</span>
         </div>
       </div>
+      
+      {/* Filter Dialog */}
+      <FilterDialog 
+        isOpen={isFilterOpen} 
+        onClose={() => setIsFilterOpen(false)} 
+        onApplyFilters={applyFilters} 
+      />
+      
+      {/* Candidate Detail Dialog */}
+      <CandidateDetailDialog 
+        candidate={currentCandidate} 
+        isOpen={isDetailOpen} 
+        onClose={() => setIsDetailOpen(false)} 
+      />
     </DashboardLayout>
   );
 };
