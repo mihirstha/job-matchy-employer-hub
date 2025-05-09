@@ -12,6 +12,7 @@ import Messages from "./pages/Messages";
 import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/payment" element={<Payment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
@@ -205,7 +204,7 @@ const Settings = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold">Rs. 2,999/month</p>
+                    <p className="text-2xl font-bold">Rs. 5,000/month</p>
                     <Button variant="outline" size="sm" className="mt-2">
                       Upgrade Plan
                     </Button>

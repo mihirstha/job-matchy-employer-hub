@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PricingFeature {
   name: string;
@@ -27,6 +30,8 @@ interface ExtraService {
 export function PricingTable() {
   const [selectedPlan, setSelectedPlan] = useState<"premium" | "normal" | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   const features: PricingFeature[] = [
     {
@@ -99,6 +104,14 @@ export function PricingTable() {
     toast({
       title: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan Selected`,
       description: `You have selected the ${plan} plan. Continue to checkout to complete your purchase.`,
+    });
+  };
+  
+  const handleContinueToCheckout = () => {
+    navigate("/payment");
+    toast({
+      title: "Redirecting to Payment",
+      description: "You're being redirected to complete your payment.",
     });
   };
 
@@ -215,13 +228,16 @@ export function PricingTable() {
           
           {selectedPlan && (
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <p className="font-medium text-green-800">Ready to proceed with your {selectedPlan} plan?</p>
                   <p className="text-sm text-green-700">Click continue to proceed with your selected plan.</p>
                 </div>
                 <div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button 
+                    className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+                    onClick={handleContinueToCheckout}
+                  >
                     Continue to Checkout
                   </Button>
                 </div>

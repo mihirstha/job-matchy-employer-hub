@@ -1,342 +1,203 @@
 
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Search, Heart, Calendar, Video, ThumbsUp, ThumbsDown, Star, Eye } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { MouseEvent } from "react";
 
-type Candidate = {
-  id: string;
-  name: string;
-  role: string;
-  location: string;
-  experience: string;
-  education: string;
-  skills: string[];
-  appliedFor: string;
-  appliedDate: string;
-  status: "new" | "shortlisted" | "interviewed" | "offered" | "rejected";
-  avatar?: string;
-  hasVideo?: boolean;
-};
-
-interface CandidatesListProps {
+export interface CandidatesListProps {
   onViewProfile: (id: string) => void;
+  filter?: "all" | "shortlisted" | "interview" | null;
 }
 
-export function CandidatesList({ onViewProfile }: CandidatesListProps) {
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
-  const { toast } = useToast();
-  
-  // Mock data for candidates
-  const candidates: Candidate[] = [
+export function CandidatesList({ onViewProfile, filter = null }: CandidatesListProps) {
+  // Sample candidates data - in a real app, this would come from an API
+  const allCandidates = [
     {
       id: "1",
-      name: "Priyanka Sharma",
-      role: "Frontend Developer",
-      location: "Kathmandu",
-      experience: "3 years",
-      education: "B.E. in Computer Engineering",
-      skills: ["React", "JavaScript", "HTML/CSS", "UI/UX"],
-      appliedFor: "Senior React Developer",
-      appliedDate: "2025-05-01",
+      name: "Rahul Patel",
+      avatar: "https://i.pravatar.cc/150?img=11",
+      position: "Frontend Developer",
+      location: "Kathmandu, Nepal",
+      experience: "5 years",
+      skills: ["React", "JavaScript", "CSS"],
       status: "shortlisted",
-      avatar: "https://i.pravatar.cc/150?img=1",
-      hasVideo: true,
+      matchScore: 92,
     },
     {
       id: "2",
-      name: "Rahul Patel",
-      role: "Backend Developer",
-      location: "Pokhara",
-      experience: "5 years",
-      education: "M.Tech in Information Technology",
-      skills: ["Node.js", "Python", "MongoDB", "AWS"],
-      appliedFor: "Senior React Developer",
-      appliedDate: "2025-05-02",
-      status: "new",
-      avatar: "https://i.pravatar.cc/150?img=2",
-      hasVideo: false,
+      name: "Priya Sharma",
+      avatar: "https://i.pravatar.cc/150?img=5",
+      position: "UI/UX Designer",
+      location: "Pokhara, Nepal",
+      experience: "3 years",
+      skills: ["Figma", "Adobe XD", "Sketch"],
+      status: "interview",
+      matchScore: 89,
     },
     {
       id: "3",
-      name: "Ankit Gurung",
-      role: "Full Stack Developer",
-      location: "Lalitpur",
+      name: "Ankit Gupta",
+      avatar: "https://i.pravatar.cc/150?img=12",
+      position: "Full Stack Developer",
+      location: "Birgunj, Nepal",
       experience: "4 years",
-      education: "B.Sc. in Computer Science",
-      skills: ["React", "Node.js", "Express", "PostgreSQL"],
-      appliedFor: "Marketing Specialist",
-      appliedDate: "2025-05-03",
-      status: "interviewed",
-      avatar: "https://i.pravatar.cc/150?img=3",
-      hasVideo: true,
+      skills: ["Node.js", "MongoDB", "React"],
+      status: "new",
+      matchScore: 75,
     },
     {
       id: "4",
-      name: "Sita Thapa",
-      role: "UI/UX Designer",
-      location: "Bhaktapur",
+      name: "Sunita KC",
+      avatar: "https://i.pravatar.cc/150?img=6",
+      position: "Backend Developer",
+      location: "Kathmandu, Nepal",
       experience: "2 years",
-      education: "B.A. in Visual Design",
-      skills: ["Figma", "Adobe XD", "Sketch", "Prototyping"],
-      appliedFor: "Product Manager",
-      appliedDate: "2025-05-04",
-      status: "new",
-      avatar: "https://i.pravatar.cc/150?img=4",
-      hasVideo: true,
+      skills: ["Python", "Django", "PostgreSQL"],
+      status: "shortlisted",
+      matchScore: 82,
     },
     {
       id: "5",
-      name: "Ravi Bhandari",
-      role: "DevOps Engineer",
-      location: "Butwal",
+      name: "Bijay Thapa",
+      avatar: "https://i.pravatar.cc/150?img=13",
+      position: "Mobile App Developer",
+      location: "Lalitpur, Nepal",
+      experience: "3 years",
+      skills: ["Flutter", "Dart", "Firebase"],
+      status: "interview",
+      matchScore: 78,
+    },
+    {
+      id: "6",
+      name: "Nisha Adhikari",
+      avatar: "https://i.pravatar.cc/150?img=7",
+      position: "Product Manager",
+      location: "Kathmandu, Nepal",
       experience: "6 years",
-      education: "M.Sc. in Cloud Computing",
-      skills: ["Docker", "Kubernetes", "CI/CD", "AWS"],
-      appliedFor: "Financial Analyst",
-      appliedDate: "2025-05-01",
-      status: "rejected",
-      avatar: "https://i.pravatar.cc/150?img=5",
-      hasVideo: false,
-    }
+      skills: ["Agile", "Scrum", "Product Development"],
+      status: "new",
+      matchScore: 70,
+    },
   ];
   
-  // Filter and search candidates
-  const filteredCandidates = candidates.filter(candidate => {
-    const matchesFilter = filter === "all" || candidate.status === filter;
-    const matchesSearch = candidate.name.toLowerCase().includes(search.toLowerCase()) || 
-                         candidate.role.toLowerCase().includes(search.toLowerCase()) ||
-                         candidate.skills.some(skill => skill.toLowerCase().includes(search.toLowerCase()));
-    
-    return matchesFilter && matchesSearch;
-  });
+  // Filter candidates based on the selected filter
+  const filteredCandidates = filter 
+    ? filter === 'all' 
+      ? allCandidates
+      : allCandidates.filter(candidate => candidate.status === filter)
+    : allCandidates;
   
-  // Status badge styling
-  const getStatusBadge = (status: Candidate["status"]) => {
-    switch (status) {
-      case "new":
-        return <Badge variant="secondary">New</Badge>;
-      case "shortlisted":
+  const handleViewProfile = (e: MouseEvent, id: string) => {
+    e.preventDefault();
+    onViewProfile(id);
+  };
+  
+  const getStatusBadge = (status: string) => {
+    switch(status) {
+      case 'shortlisted':
         return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Shortlisted</Badge>;
-      case "interviewed":
-        return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Interviewed</Badge>;
-      case "offered":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Offered</Badge>;
-      case "rejected":
-        return <Badge variant="destructive">Rejected</Badge>;
+      case 'interview':
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Interview</Badge>;
       default:
-        return null;
+        return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">New</Badge>;
     }
   };
 
-  // Handle candidate actions
-  const handleCandidateAction = (id: string, action: string) => {
-    const candidate = candidates.find(c => c.id === id);
-    if (!candidate) return;
-
-    switch (action) {
-      case "shortlist":
-        toast({
-          title: "Candidate Shortlisted",
-          description: `${candidate.name} has been added to your shortlist.`,
-        });
-        break;
-      case "reject":
-        toast({
-          title: "Candidate Rejected",
-          description: `${candidate.name} has been marked as rejected.`,
-        });
-        break;
-      case "save":
-        toast({
-          title: "Candidate Saved",
-          description: `${candidate.name} has been saved to your favorites.`,
-        });
-        break;
-      case "schedule":
-        toast({
-          title: "Interview Scheduling",
-          description: `You can now schedule an interview with ${candidate.name}.`,
-        });
-        break;
-      case "video":
-        toast({
-          title: "Video Resume",
-          description: `Now playing ${candidate.name}'s video resume.`,
-        });
-        break;
-    }
-  };
-  
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Candidate Applications</CardTitle>
-        <div className="flex gap-2">
-          <div className="relative w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-            <Input
-              type="search"
-              placeholder="Search candidates, skills..."
-              className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Candidates</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="shortlisted">Shortlisted</SelectItem>
-              <SelectItem value="interviewed">Interviewed</SelectItem>
-              <SelectItem value="offered">Offered</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="space-y-4">
-          {filteredCandidates.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No candidates found matching your filters.
-            </div>
-          ) : (
-            filteredCandidates.map((candidate) => (
-              <div key={candidate.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex flex-col md:flex-row justify-between">
-                  <div className="flex items-center gap-4 mb-4 md:mb-0">
-                    <Avatar>
-                      {candidate.avatar ? (
-                        <img src={candidate.avatar} alt={candidate.name} />
-                      ) : (
-                        <div className="bg-primary/20 w-full h-full flex items-center justify-center text-primary font-medium">
-                          {candidate.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                      )}
+    <div className="space-y-6">
+      {filteredCandidates.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-gray-500">No candidates match your filters.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        filteredCandidates.map(candidate => (
+          <Card key={candidate.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div className="md:col-span-9 p-6">
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                      <img src={candidate.avatar} alt={candidate.name} />
                     </Avatar>
                     
-                    <div>
-                      <h4 className="text-lg font-medium">{candidate.name}</h4>
-                      <p className="text-gray-600">{candidate.role}</p>
-                      <div className="mt-1 flex items-center text-sm text-gray-500">
-                        <span>{candidate.location}</span>
-                        <span className="mx-2">•</span>
-                        <span>{candidate.experience}</span>
-                        {candidate.hasVideo && (
-                          <>
-                            <span className="mx-2">•</span>
-                            <Video className="h-3 w-3 text-primary" />
-                            <span className="ml-1 text-primary">Video Resume</span>
-                          </>
-                        )}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-lg">{candidate.name}</h3>
+                      <div className="flex flex-col md:flex-row md:items-center gap-2 text-sm">
+                        <p className="text-gray-700">{candidate.position}</p>
+                        <span className="hidden md:inline text-gray-400">•</span>
+                        <p className="text-gray-500">{candidate.location}</p>
+                        <span className="hidden md:inline text-gray-400">•</span>
+                        <p className="text-gray-500">{candidate.experience}</p>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {candidate.skills.map((skill, index) => (
+                          <Badge key={index} variant="outline" className="bg-gray-50">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      <div className="flex items-center pt-2">
+                        {getStatusBadge(candidate.status)}
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="flex flex-col md:items-end">
-                    <div className="mb-2">
-                      {getStatusBadge(candidate.status)}
-                    </div>
-                    <p className="text-sm text-gray-500">Applied for: {candidate.appliedFor}</p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(candidate.appliedDate).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric' 
-                      })}
-                    </p>
-                  </div>
                 </div>
                 
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600 mb-2">{candidate.education}</p>
-                  <div className="flex flex-wrap gap-1">
-                    {candidate.skills.map((skill, idx) => (
-                      <Badge key={idx} variant="outline" className="bg-secondary/20">
-                        {skill}
-                      </Badge>
-                    ))}
+                <div className="md:col-span-3 bg-gray-50 p-6 flex flex-col justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 mb-1">Match Score</p>
+                    <p className="text-3xl font-bold text-primary">{candidate.matchScore}%</p>
                   </div>
-                </div>
-                
-                <div className="flex flex-wrap justify-end mt-4 gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleCandidateAction(candidate.id, "save")}
-                  >
-                    <Heart className="mr-1 h-4 w-4" /> Save
-                  </Button>
                   
-                  {candidate.hasVideo && (
+                  <div className="flex flex-col space-y-2 mt-4">
                     <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-primary border-primary hover:bg-primary/10"
-                      onClick={() => handleCandidateAction(candidate.id, "video")}
+                      onClick={(e) => handleViewProfile(e, candidate.id)}
+                      className="w-full"
                     >
-                      <Video className="mr-1 h-4 w-4" /> View Video
+                      View Profile
                     </Button>
-                  )}
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleCandidateAction(candidate.id, "schedule")}
-                  >
-                    <Calendar className="mr-1 h-4 w-4" /> Schedule
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    className="bg-blue-500 hover:bg-blue-600"
-                    onClick={() => handleCandidateAction(candidate.id, "shortlist")}
-                  >
-                    <Star className="mr-1 h-4 w-4" /> Shortlist
-                  </Button>
-                  
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleCandidateAction(candidate.id, "reject")}
-                  >
-                    <ThumbsDown className="mr-1 h-4 w-4" /> Reject
-                  </Button>
-                  
-                  <Button 
-                    size="sm"
-                    onClick={() => onViewProfile(candidate.id)}
-                  >
-                    <Eye className="mr-1 h-4 w-4" /> View Profile
-                  </Button>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-green-600 border-green-200 hover:bg-green-50"
+                      >
+                        Select
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      >
+                        Shortlist
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="text-primary"
+                    >
+                      Save for later
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
   );
 }

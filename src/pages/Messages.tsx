@@ -8,6 +8,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Send, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Messages = () => {
   const [isPremiumUser, setIsPremiumUser] = useState(false);
@@ -30,13 +32,23 @@ const Messages = () => {
   ]);
   const [newMessage, setNewMessage] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   const handleSubscribe = () => {
+    // Redirect to hypothetical payment page
+    navigate("/payment");
+    
+    // For demo purposes, we'll simulate a successful subscription
     toast({
-      title: "Subscription Success",
-      description: "You now have premium access to messaging!",
+      title: "Redirecting to payment",
+      description: "You're being redirected to complete your subscription payment.",
     });
-    setIsPremiumUser(true);
+    
+    // In a real app, we would only set this after successful payment
+    setTimeout(() => {
+      setIsPremiumUser(true);
+    }, 2000);
   };
   
   const handleSendMessage = (e: React.FormEvent) => {
@@ -126,7 +138,7 @@ const Messages = () => {
         // Chat interface
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Chat sidebar */}
-          <div className="md:col-span-1 border rounded-lg bg-white overflow-hidden">
+          <div className={`md:col-span-1 border rounded-lg bg-white overflow-hidden ${isMobile ? 'hidden' : ''}`}>
             <div className="p-4 border-b">
               <h2 className="font-semibold">Recent Conversations</h2>
             </div>
@@ -156,8 +168,17 @@ const Messages = () => {
             </div>
           </div>
           
+          {/* Mobile view: Show chat list button */}
+          {isMobile && isPremiumUser && (
+            <div className="fixed bottom-16 left-4 z-50">
+              <Button className="rounded-full h-12 w-12 shadow-lg" variant="outline">
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+          
           {/* Chat main */}
-          <div className="md:col-span-3 border rounded-lg bg-white flex flex-col h-[600px]">
+          <div className={`${isMobile ? 'col-span-1' : 'md:col-span-3'} border rounded-lg bg-white flex flex-col h-[600px]`}>
             <div className="p-4 border-b flex items-center gap-3">
               <Avatar className="h-10 w-10">
                 <img src="https://i.pravatar.cc/150?img=1" alt="Priyanka Sharma" />
