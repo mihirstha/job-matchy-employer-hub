@@ -13,6 +13,7 @@ import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Payment from "./pages/Payment";
+import SwipePage from "./pages/SwipePage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/candidates" element={<Candidates />} />
+          <Route path="/swipe" element={<SwipePage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/saved" element={<Saved />} />

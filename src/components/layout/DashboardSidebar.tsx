@@ -1,106 +1,80 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { 
-  Home, 
-  Users, 
-  Calendar, 
+import { Button } from "@/components/ui/button";
+import {
+  Home,
+  Briefcase,
+  Users,
+  Calendar,
   MessageSquare,
-  Heart,
+  Bookmark,
   Settings,
-  LogOut
+  Heart
 } from "lucide-react";
 
-type SidebarItemProps = {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-  active?: boolean;
-};
-
-const SidebarItem = ({ icon, label, href, active }: SidebarItemProps) => {
-  return (
-    <Link
-      to={href}
-      className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:bg-primary-100",
-        active ? "bg-primary-100 text-primary-700" : "text-gray-600"
-      )}
-    >
-      <span className="flex h-6 w-6 items-center justify-center">
-        {icon}
-      </span>
-      <span className="text-sm font-medium">{label}</span>
-    </Link>
-  );
-};
-
 export function DashboardSidebar() {
-  const path = window.location.pathname;
-  
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const menuItems = [
+    { label: "Overview", path: "/", icon: Home },
+    { label: "Jobs", path: "/jobs", icon: Briefcase },
+    { label: "Candidates", path: "/candidates", icon: Users },
+    { label: "Swipe Candidates", path: "/swipe", icon: Heart },
+    { label: "Calendar", path: "/calendar", icon: Calendar },
+    { label: "Messages", path: "/messages", icon: MessageSquare },
+    { label: "Saved", path: "/saved", icon: Bookmark },
+    { label: "Settings", path: "/settings", icon: Settings },
+  ];
+
   return (
-    <aside className="hidden md:flex flex-col w-64 border-r bg-white h-screen fixed top-0 left-0">
-      <div className="p-6">
-        <Link to="/">
-          <img 
-            src="/lovable-uploads/7878653a-ce16-48ca-bb79-dcf11aba104a.png" 
-            alt="Job Matchy Nepal Logo" 
-            className="h-12 mx-auto"
-          />
-        </Link>
+    <div className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-white px-4 py-8 shadow-sm md:flex flex-col">
+      {/* Logo */}
+      <div className="mb-8">
+        <div className="flex items-center justify-center">
+          <span className="text-xl font-bold text-gray-900">JOB MATCHY</span>
+        </div>
+        <div className="mt-1 text-center text-xs text-gray-500">
+          Recruitment Simplified
+        </div>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        <SidebarItem 
-          icon={<Home className="h-5 w-5" />} 
-          label="Dashboard" 
-          href="/" 
-          active={path === "/"}
-        />
-        <SidebarItem 
-          icon={<Users className="h-5 w-5" />} 
-          label="Job Postings" 
-          href="/jobs" 
-          active={path.includes("/jobs")}
-        />
-        <SidebarItem 
-          icon={<Users className="h-5 w-5" />} 
-          label="Candidates" 
-          href="/candidates" 
-          active={path.includes("/candidates")}
-        />
-        <SidebarItem 
-          icon={<Calendar className="h-5 w-5" />} 
-          label="Calendar" 
-          href="/calendar" 
-          active={path.includes("/calendar")}
-        />
-        <SidebarItem 
-          icon={<MessageSquare className="h-5 w-5" />} 
-          label="Messages" 
-          href="/messages" 
-          active={path.includes("/messages")}
-        />
-        <SidebarItem 
-          icon={<Heart className="h-5 w-5" />} 
-          label="Saved" 
-          href="/saved" 
-          active={path.includes("/saved")}
-        />
+
+      {/* Navigation */}
+      <nav className="space-y-1.5">
+        {menuItems.map((item) => (
+          <Button
+            key={item.path}
+            variant="ghost"
+            className={cn(
+              "w-full justify-start",
+              location.pathname === item.path
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+            )}
+            onClick={() => navigate(item.path)}
+          >
+            <item.icon className="mr-3 h-5 w-5" />
+            {item.label}
+          </Button>
+        ))}
       </nav>
-      <div className="px-3 py-4 mt-auto border-t">
-        <SidebarItem 
-          icon={<Settings className="h-5 w-5" />} 
-          label="Settings" 
-          href="/settings" 
-          active={path.includes("/settings")}
-        />
-        <SidebarItem 
-          icon={<LogOut className="h-5 w-5" />} 
-          label="Logout" 
-          href="/logout"
-        />
+
+      <div className="mt-auto">
+        <div className="rounded-lg bg-gray-50 p-4">
+          <div className="mb-2 text-sm font-medium">Need help?</div>
+          <p className="mb-3 text-xs text-gray-500">
+            Contact our support team for assistance with your recruitment needs.
+          </p>
+          <Button
+            variant="outline"
+            className="w-full text-xs"
+            onClick={() => navigate("/support")}
+          >
+            Contact Support
+          </Button>
+        </div>
       </div>
-    </aside>
+    </div>
   );
 }
