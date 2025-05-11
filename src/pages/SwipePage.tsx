@@ -1,15 +1,14 @@
-
 import React, { useState, useRef } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X, Check, Filter, ArrowRight, ArrowLeft } from "lucide-react";
+import { MessageSquare, X, Check, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -215,18 +214,11 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="flex flex-col items-center">
-            <div className="relative">
-              <img 
-                src={candidate.photo} 
-                alt={candidate.name} 
-                className="w-28 h-28 rounded-full object-cover border-4 border-primary" 
-              />
-              {isMatched && (
-                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-              )}
-            </div>
+            <img 
+              src={candidate.photo} 
+              alt={candidate.name} 
+              className="w-28 h-28 rounded-full object-cover border-4 border-primary" 
+            />
             <h2 className={`text-2xl font-bold mt-3 ${!isMatched ? 'blur-sm select-none' : ''}`}>
               {isMatched ? candidate.name : "Candidate Name"}
             </h2>
@@ -279,7 +271,7 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
           <div className="flex gap-2 pt-4 border-t">
             <Button onClick={onClose} variant="outline" className="flex-1">Close</Button>
             <Button className="flex-1 bg-blue-500 hover:bg-blue-600">
-              <MessageSquare className="h-4 w-4 mr-2" /> Message
+              <MessageSquare className="h-4 w-4 mr-2" /> Message (Rs. 499)
             </Button>
           </div>
         </div>
@@ -288,7 +280,7 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
   );
 };
 
-const SwipeCard = ({ 
+const TinderCard = ({ 
   candidate, 
   onSwipe, 
   onViewDetails, 
@@ -300,8 +292,12 @@ const SwipeCard = ({
   isMatched: boolean;
 }) => {
   const cardX = useMotionValue(0);
-  const rotate = useTransform(cardX, [-200, 200], [-30, 30]);
+  const rotate = useTransform(cardX, [-200, 200], [-25, 25]);
   const cardOpacity = useTransform(cardX, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
+  
+  // Visual indicators that appear based on swipe direction
+  const likeOpacity = useTransform(cardX, [0, 100, 200], [0, 0.5, 1]);
+  const nopeOpacity = useTransform(cardX, [-200, -100, 0], [1, 0.5, 0]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (info.offset.x > 100) {
@@ -313,80 +309,98 @@ const SwipeCard = ({
 
   return (
     <motion.div
-      className="absolute w-full max-w-md"
+      className="absolute w-full"
       style={{ x: cardX, rotate, opacity: cardOpacity }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
-      whileTap={{ scale: 1.05 }}
+      whileTap={{ cursor: "grabbing" }}
     >
-      <Card className="overflow-hidden bg-white rounded-3xl shadow-xl border-0">
+      <Card className="overflow-hidden rounded-2xl shadow-lg border-0">
+        {/* Card image */}
         <div 
-          className="relative cursor-pointer"
+          className="relative h-[65vh] cursor-pointer"
           onClick={onViewDetails}
         >
           <img
             src={candidate.photo}
-            alt={candidate.name}
-            className="w-full h-96 object-cover"
+            alt={candidate.jobTitle}
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           
-          {/* Action indicators (now positioned to not overlap with content) */}
-          <div className="absolute top-1/3 left-0 right-0 flex justify-between px-6 pointer-events-none z-10">
-            <div className="bg-white rounded-full p-3 shadow-lg opacity-80 transform -translate-x-4 rotate-12">
-              <X className="h-8 w-8 text-red-500" />
-            </div>
-            <div className="bg-white rounded-full p-3 shadow-lg opacity-80 transform translate-x-4 -rotate-12">
-              <Check className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
+          {/* Swipe indicators */}
+          <motion.div 
+            className="absolute top-8 left-8 bg-red-500 text-white text-2xl font-bold px-6 py-2 rounded-lg border-4 border-white transform -rotate-12"
+            style={{ opacity: nopeOpacity }}
+          >
+            NOPE
+          </motion.div>
           
+          <motion.div 
+            className="absolute top-8 right-8 bg-green-500 text-white text-2xl font-bold px-6 py-2 rounded-lg border-4 border-white transform rotate-12"
+            style={{ opacity: likeOpacity }}
+          >
+            LIKE
+          </motion.div>
+          
+          {/* Candidate info */}
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className={`text-2xl font-bold ${!isMatched ? 'blur-sm select-none' : ''}`}>
-                {isMatched ? candidate.name : "Candidate"}
-              </h2>
-              <span className="text-xl font-medium">{candidate.age}</span>
+            <div className="flex items-end justify-between">
+              <div>
+                <h2 className={`text-3xl font-bold ${!isMatched ? 'blur-sm select-none' : ''}`}>
+                  {isMatched ? candidate.name : "Candidate"}
+                </h2>
+                <p className="text-xl">{candidate.jobTitle}</p>
+                <div className="flex items-center gap-2 text-gray-200 mt-1">
+                  <span>{candidate.location}</span>
+                  <span className="text-lg">•</span>
+                  <span>{candidate.experience}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-center w-10 h-10 bg-gray-200/30 backdrop-blur-sm rounded-full">
+                {candidate.age}
+              </div>
             </div>
-            <p className="text-lg font-medium mb-1">{candidate.jobTitle}</p>
-            <div className="flex items-center gap-1 text-gray-200">
-              <span>{candidate.location}</span>
-              <span className="mx-1">•</span>
-              <span>{candidate.gender}</span>
-              <span className="mx-1">•</span>
-              <span>{candidate.experience}</span>
+            
+            <div className="mt-4 flex flex-wrap gap-2">
+              {candidate.skills.slice(0, 3).map((skill: string, index: number) => (
+                <Badge key={index} className="bg-white/20 text-white border-0">
+                  {skill}
+                </Badge>
+              ))}
+              {candidate.skills.length > 3 && (
+                <Badge className="bg-white/20 text-white border-0">
+                  +{candidate.skills.length - 3}
+                </Badge>
+              )}
             </div>
           </div>
         </div>
         
-        <div className="p-6">
-          <p className="text-gray-700 mb-4">{candidate.bio}</p>
+        {/* Action buttons */}
+        <div className="flex justify-around p-4 bg-white">
+          <Button 
+            variant="outline" 
+            className="rounded-full h-16 w-16 border-2 border-red-500 text-red-500 hover:bg-red-50 p-0"
+            onClick={() => onSwipe("left")}
+          >
+            <X className="h-8 w-8" />
+          </Button>
           
-          <h3 className="font-medium text-gray-900 mb-2">Skills</h3>
-          <div className="flex flex-wrap gap-2 mb-5">
-            {candidate.skills.map((skill: string, index: number) => (
-              <Badge key={index} variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                {skill}
-              </Badge>
-            ))}
-          </div>
+          <Button 
+            className="rounded-full h-16 w-16 bg-primary hover:bg-primary/90 text-white p-0"
+            onClick={() => onViewDetails()}
+          >
+            <MessageSquare className="h-8 w-8" />
+          </Button>
           
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            <Button 
-              variant="outline" 
-              className="rounded-full border-2 border-red-500 text-red-500 hover:bg-red-50 font-medium"
-              onClick={() => onSwipe("left")}
-            >
-              <X className="h-5 w-5 mr-1" /> Reject
-            </Button>
-            <Button 
-              className="rounded-full bg-green-500 hover:bg-green-600 text-white font-medium"
-              onClick={() => onSwipe("right")}
-            >
-              <Check className="h-5 w-5 mr-1" /> Shortlist
-            </Button>
-          </div>
+          <Button 
+            className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white p-0"
+            onClick={() => onSwipe("right")}
+          >
+            <Check className="h-8 w-8" />
+          </Button>
         </div>
       </Card>
     </motion.div>
@@ -473,9 +487,6 @@ const SwipePage = () => {
           title: "Candidate Shortlisted!",
           description: `You've shortlisted ${isMatched(candidateId) ? candidates[currentCardIndex].name : 'a candidate'}.`,
         });
-        
-        // Here we would normally update a backend database to mark this candidate as shortlisted
-        console.log(`Shortlisted candidate ${candidateId}`);
       }
       
       // Move to next card
@@ -504,34 +515,33 @@ const SwipePage = () => {
   
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center min-h-[80vh] pt-4 pb-20 max-w-lg mx-auto px-4">
-        {/* Header with Logo and Filter */}
-        <div className="w-full flex justify-between items-center mb-6 sticky top-0 z-10 bg-white py-3 px-2">
-          <div className="flex items-center gap-2">
-            <img 
-              src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
-              alt="Job Matchy Nepal" 
-              className="h-10"
-              onError={(e) => {
-                e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
-              }}
-            />
-          </div>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center gap-1 border-primary text-primary"
-            onClick={() => setIsFilterOpen(true)}
-          >
-            <Filter className="h-4 w-4" />
-            {filters ? "Filtered" : "Filter"}
-          </Button>
+      {/* Header with Logo and Filter */}
+      <div className="fixed top-16 left-0 right-0 z-30 bg-white shadow-sm px-4 md:px-6 py-3 flex justify-between items-center">
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+            alt="Job Matchy Nepal" 
+            className="h-10"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
+            }}
+          />
         </div>
-
-        {/* Current filters display */}
-        {filters && (
-          <div className="w-full mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200 z-10 relative">
+        
+        <Button 
+          onClick={() => setIsFilterOpen(true)}
+          variant="outline" 
+          className="flex items-center gap-1 border-primary text-primary"
+        >
+          <Filter className="h-4 w-4" />
+          {filters ? "Filters Applied" : "Filter"}
+        </Button>
+      </div>
+      
+      {/* Active filters display */}
+      {filters && (
+        <div className="fixed top-28 left-0 right-0 z-20 px-4 md:px-6 pb-2">
+          <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Active Filters</span>
               <Button 
@@ -540,7 +550,7 @@ const SwipePage = () => {
                 className="h-7 text-xs"
                 onClick={resetFilters}
               >
-                Reset
+                Reset All
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -571,64 +581,42 @@ const SwipePage = () => {
               )}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Swipe Area */}
-        <div className="relative w-full h-[60vh] flex items-center justify-center">
-          {currentCardIndex < candidates.length ? (
-            <SwipeCard 
-              candidate={candidates[currentCardIndex]} 
-              onSwipe={handleSwipe}
-              onViewDetails={() => setIsDetailOpen(true)}
-              isMatched={isMatched(candidates[currentCardIndex].id)}
-            />
-          ) : (
-            <div className="text-center p-8 border-2 border-dashed border-gray-300 rounded-lg bg-white">
-              <h3 className="text-xl font-semibold mb-2">No more candidates!</h3>
-              <p className="text-gray-600 mb-4">You've gone through all available candidates.</p>
-              <Button onClick={() => setCurrentCardIndex(0)}>
-                Start Over
-              </Button>
-            </div>
+      {/* Main swipe area */}
+      <div className={`flex flex-col items-center justify-center min-h-[calc(100vh-170px)] pt-20 pb-6 px-4 ${filters ? 'mt-12' : 'mt-0'}`}>
+        <div className="relative w-full max-w-md h-[70vh]">
+          {candidates.map((candidate, index) => (
+            index >= currentCardIndex && index < currentCardIndex + 3 && (
+              <div
+                key={candidate.id}
+                className="absolute w-full"
+                style={{ zIndex: candidates.length - index }}
+              >
+                <TinderCard
+                  candidate={candidate}
+                  onSwipe={handleSwipe}
+                  onViewDetails={() => setIsDetailOpen(true)}
+                  isMatched={isMatched(candidate.id)}
+                />
+              </div>
+            )
+          ))}
+          
+          {currentCardIndex >= candidates.length && (
+            <Card className="flex flex-col items-center justify-center h-[70vh] p-8 text-center shadow-lg">
+              <h3 className="text-xl font-bold mb-4">No more candidates!</h3>
+              <p className="text-gray-600 mb-6">You've gone through all available candidates.</p>
+              <Button onClick={() => setCurrentCardIndex(0)}>Start Over</Button>
+            </Card>
           )}
         </div>
         
-        {/* Action Buttons */}
-        <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-10 z-10 md:relative md:bottom-0 md:mt-10">
-          <Button
-            size="lg"
-            variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 flex items-center justify-center p-0 shadow-lg"
-            onClick={() => handleSwipe("left")}
-            disabled={currentCardIndex >= candidates.length}
-          >
-            <X className="h-8 w-8" />
-          </Button>
-          
-          <Button
-            size="lg"
-            variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-blue-500 bg-white text-blue-500 hover:bg-blue-50 flex items-center justify-center p-0 shadow-lg"
-            onClick={handleSendMessage}
-            disabled={currentCardIndex >= candidates.length}
-          >
-            <MessageSquare className="h-8 w-8" />
-          </Button>
-          
-          <Button
-            size="lg"
-            className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white flex items-center justify-center p-0 shadow-lg"
-            onClick={() => handleSwipe("right")}
-            disabled={currentCardIndex >= candidates.length}
-          >
-            <Check className="h-8 w-8" />
-          </Button>
-        </div>
-        
         {/* Match Counter */}
-        <div className="mt-6 text-sm font-medium text-gray-700 flex items-center gap-1">
+        <div className="mt-6 flex items-center gap-1.5 bg-green-50 px-4 py-2 rounded-full">
           <span className="text-green-600 font-bold text-xl">{Object.values(swipedCandidates).filter(dir => dir === "right").length}</span> 
-          <span>Candidates Shortlisted</span>
+          <span className="text-green-800">Candidates Shortlisted</span>
         </div>
       </div>
       

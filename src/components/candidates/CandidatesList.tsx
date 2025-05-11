@@ -22,7 +22,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "5 years",
       skills: ["React", "JavaScript", "CSS"],
       status: "shortlisted",
-      matchScore: 92,
     },
     {
       id: "2",
@@ -33,7 +32,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "3 years",
       skills: ["Figma", "Adobe XD", "Sketch"],
       status: "interview",
-      matchScore: 89,
     },
     {
       id: "3",
@@ -44,7 +42,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "4 years",
       skills: ["Node.js", "MongoDB", "React"],
       status: "new",
-      matchScore: 75,
     },
     {
       id: "4",
@@ -55,7 +52,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "2 years",
       skills: ["Python", "Django", "PostgreSQL"],
       status: "shortlisted",
-      matchScore: 82,
     },
     {
       id: "5",
@@ -66,7 +62,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "3 years",
       skills: ["Flutter", "Dart", "Firebase"],
       status: "interview",
-      matchScore: 78,
     },
     {
       id: "6",
@@ -77,7 +72,6 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "6 years",
       skills: ["Agile", "Scrum", "Product Development"],
       status: "new",
-      matchScore: 70,
     },
   ];
   
@@ -120,11 +114,11 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
                 <div className="md:col-span-9 p-6">
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <img src={candidate.avatar} alt={candidate.name} />
+                      <img src={candidate.avatar} alt={candidate.position} />
                     </Avatar>
                     
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-lg">{candidate.name}</h3>
+                      <h3 className="font-semibold text-lg blur-sm select-none">Candidate</h3>
                       <div className="flex flex-col md:flex-row md:items-center gap-2 text-sm">
                         <p className="text-gray-700">{candidate.position}</p>
                         <span className="hidden md:inline text-gray-400">•</span>
@@ -149,15 +143,10 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
                 </div>
                 
                 <div className="md:col-span-3 bg-gray-50 p-6 flex flex-col justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Match Score</p>
-                    <p className="text-3xl font-bold text-primary">{candidate.matchScore}%</p>
-                  </div>
-                  
                   <div className="flex flex-col space-y-2 mt-4">
                     <Button 
                       onClick={(e) => handleViewProfile(e, candidate.id)}
-                      className="w-full"
+                      className="w-full bg-primary hover:bg-primary/90"
                     >
                       View Profile
                     </Button>

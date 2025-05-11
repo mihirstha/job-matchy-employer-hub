@@ -20,7 +20,17 @@ const Jobs = () => {
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-secondary-700">Job Postings</h1>
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+            alt="Job Matchy Nepal" 
+            className="h-10 mr-4"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
+            }}
+          />
+          <h1 className="text-2xl font-bold text-secondary-700">Job Postings</h1>
+        </div>
         <Button 
           className="bg-primary hover:bg-primary/90 text-white"
           onClick={() => setShowNewJobForm(!showNewJobForm)}
