@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard, ArrowLeft, Check } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +14,16 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  
+  // Check if we're coming from the chat/message feature
+  const isMessagePayment = location.pathname.includes("message") || 
+                          location.search.includes("type=message");
+  
+  // Set the payment amount based on the payment type
+  const paymentAmount = isMessagePayment ? 499 : 5000; // 499 for chat message, 5000 for job posting
+  const paymentDescription = isMessagePayment ? "Message Credit" : "Job Posting";
   
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +59,7 @@ const Payment = () => {
           <CardHeader>
             <CardTitle>Complete Your Payment</CardTitle>
             <CardDescription>
-              Enter your payment details to complete the transaction
+              Enter your payment details to complete the transaction for {paymentDescription}
             </CardDescription>
           </CardHeader>
           
@@ -185,7 +194,7 @@ const Payment = () => {
               <div className="border-t pt-4 px-6">
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-gray-500">Subtotal</span>
-                  <span>Rs. 5000.00</span>
+                  <span>Rs. {paymentAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm mb-4">
                   <span className="text-gray-500">Tax</span>
@@ -193,7 +202,7 @@ const Payment = () => {
                 </div>
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>Rs. 5000.00</span>
+                  <span>Rs. {paymentAmount.toFixed(2)}</span>
                 </div>
               </div>
               
@@ -207,7 +216,7 @@ const Payment = () => {
                     "Processing..."
                   ) : (
                     <>
-                      Pay Rs. 5000.00 with {
+                      Pay Rs. {paymentAmount.toFixed(2)} with {
                         paymentMethod === "card" ? "Card" : 
                         paymentMethod === "esewa" ? "eSewa" :
                         paymentMethod === "khalti" ? "Khalti" : "IME Pay"

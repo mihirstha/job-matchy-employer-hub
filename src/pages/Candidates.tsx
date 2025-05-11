@@ -27,7 +27,6 @@ const Candidates = () => {
             title="Total Applications"
             value="143"
             icon={<Users className="h-5 w-5" />}
-            trend={{ value: 12, isPositive: true }}
             isActive={activeFilter === "all"}
           />
         </div>
@@ -36,7 +35,6 @@ const Candidates = () => {
             title="Shortlisted"
             value="28"
             icon={<Star className="h-5 w-5" />}
-            trend={{ value: 5, isPositive: true }}
             isActive={activeFilter === "shortlisted"}
           />
         </div>
@@ -52,7 +50,6 @@ const Candidates = () => {
           title="Total Job Views"
           value="2,567"
           icon={<Eye className="h-5 w-5" />}
-          trend={{ value: 15, isPositive: true }}
         />
       </div>
       

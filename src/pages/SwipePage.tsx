@@ -8,7 +8,6 @@ import { MessageSquare, X, Check, Filter, ArrowRight, ArrowLeft } from "lucide-r
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
-import { Avatar } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -216,48 +215,55 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="flex flex-col items-center">
-            <img 
-              src={candidate.photo} 
-              alt={candidate.name} 
-              className="w-24 h-24 rounded-full object-cover" 
-            />
-            <h2 className={`text-xl font-bold mt-2 ${!isMatched ? 'blur-sm select-none' : ''}`}>
+            <div className="relative">
+              <img 
+                src={candidate.photo} 
+                alt={candidate.name} 
+                className="w-28 h-28 rounded-full object-cover border-4 border-primary" 
+              />
+              {isMatched && (
+                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
+                  <Check className="h-4 w-4 text-white" />
+                </div>
+              )}
+            </div>
+            <h2 className={`text-2xl font-bold mt-3 ${!isMatched ? 'blur-sm select-none' : ''}`}>
               {isMatched ? candidate.name : "Candidate Name"}
             </h2>
-            <p className="text-gray-600">{candidate.jobTitle}</p>
+            <p className="text-primary font-medium">{candidate.jobTitle}</p>
           </div>
           
-          <div className="grid gap-4">
+          <div className="grid gap-4 bg-slate-50 p-4 rounded-lg">
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Location</h3>
-              <p>{candidate.location}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Location</h3>
+              <p className="text-gray-800">{candidate.location}</p>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Experience</h3>
-              <p>{candidate.experience}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Experience</h3>
+              <p className="text-gray-800">{candidate.experience}</p>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Preferred Industry</h3>
-              <p>{candidate.preferredIndustry}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Preferred Industry</h3>
+              <p className="text-gray-800">{candidate.preferredIndustry}</p>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Education</h3>
-              <p>{candidate.education}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Education</h3>
+              <p className="text-gray-800">{candidate.education}</p>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Expected Salary</h3>
-              <p>{candidate.salary}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Expected Salary</h3>
+              <p className="text-gray-800">{candidate.salary}</p>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Skills</h3>
+              <h3 className="text-sm font-semibold text-gray-700">Skills</h3>
               <div className="flex flex-wrap gap-2 mt-1">
                 {candidate.skills.map((skill, index) => (
-                  <Badge key={index} variant="outline" className="bg-primary-50 text-primary border-primary">
+                  <Badge key={index} variant="outline" className="bg-primary/10 text-primary border-primary/30">
                     {skill}
                   </Badge>
                 ))}
@@ -265,8 +271,8 @@ const CandidateDetailDialog = ({ candidate, isOpen, onClose, isMatched }) => {
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Bio</h3>
-              <p className="text-sm">{candidate.bio}</p>
+              <h3 className="text-sm font-semibold text-gray-700">Bio</h3>
+              <p className="text-sm text-gray-800">{candidate.bio}</p>
             </div>
           </div>
           
@@ -326,12 +332,12 @@ const SwipeCard = ({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           
-          {/* Action buttons overlayed on the card */}
-          <div className="absolute top-1/2 left-0 right-0 flex justify-between px-6 pointer-events-none">
-            <div className="bg-white rounded-full p-3 shadow-lg opacity-80">
+          {/* Action indicators (now positioned to not overlap with content) */}
+          <div className="absolute top-1/3 left-0 right-0 flex justify-between px-6 pointer-events-none z-10">
+            <div className="bg-white rounded-full p-3 shadow-lg opacity-80 transform -translate-x-4 rotate-12">
               <X className="h-8 w-8 text-red-500" />
             </div>
-            <div className="bg-white rounded-full p-3 shadow-lg opacity-80">
+            <div className="bg-white rounded-full p-3 shadow-lg opacity-80 transform translate-x-4 -rotate-12">
               <Check className="h-8 w-8 text-green-500" />
             </div>
           </div>
@@ -360,7 +366,7 @@ const SwipeCard = ({
           <h3 className="font-medium text-gray-900 mb-2">Skills</h3>
           <div className="flex flex-wrap gap-2 mb-5">
             {candidate.skills.map((skill: string, index: number) => (
-              <Badge key={index} variant="outline" className="bg-primary-50 text-primary border-primary">
+              <Badge key={index} variant="outline" className="bg-primary/10 text-primary border-primary/30">
                 {skill}
               </Badge>
             ))}
@@ -499,25 +505,23 @@ const SwipePage = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col items-center min-h-[80vh] pt-4 pb-20 max-w-lg mx-auto px-4">
-        {/* Header with Logo and Filter - Always visible at top */}
-        <div className="w-full flex justify-between items-center mb-6 sticky top-0 z-10 bg-white py-2">
-          <div className="inline-flex items-center gap-2">
+        {/* Header with Logo and Filter */}
+        <div className="w-full flex justify-between items-center mb-6 sticky top-0 z-10 bg-white py-3 px-2">
+          <div className="flex items-center gap-2">
             <img 
-              src="/logo.png" 
-              alt="Job Matchy" 
-              className="h-8"
+              src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+              alt="Job Matchy Nepal" 
+              className="h-10"
               onError={(e) => {
-                // Fallback if logo doesn't exist
-                e.currentTarget.src = "https://via.placeholder.com/80x30?text=Job+Matchy";
+                e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
               }}
             />
-            <span className="font-bold text-xl text-primary">Job Matchy</span>
           </div>
           
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 border-primary text-primary"
             onClick={() => setIsFilterOpen(true)}
           >
             <Filter className="h-4 w-4" />
@@ -590,21 +594,21 @@ const SwipePage = () => {
         </div>
         
         {/* Action Buttons */}
-        <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-6 z-10 md:relative md:bottom-0 md:mt-10">
+        <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-10 z-10 md:relative md:bottom-0 md:mt-10">
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-red-500 text-red-500 hover:bg-red-50 flex items-center justify-center p-0 shadow-lg"
+            className="rounded-full h-16 w-16 border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 flex items-center justify-center p-0 shadow-lg"
             onClick={() => handleSwipe("left")}
             disabled={currentCardIndex >= candidates.length}
           >
-            <ArrowLeft className="h-8 w-8" />
+            <X className="h-8 w-8" />
           </Button>
           
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full h-16 w-16 border-2 border-blue-500 text-blue-500 hover:bg-blue-50 flex items-center justify-center p-0 shadow-lg"
+            className="rounded-full h-16 w-16 border-2 border-blue-500 bg-white text-blue-500 hover:bg-blue-50 flex items-center justify-center p-0 shadow-lg"
             onClick={handleSendMessage}
             disabled={currentCardIndex >= candidates.length}
           >
@@ -617,7 +621,7 @@ const SwipePage = () => {
             onClick={() => handleSwipe("right")}
             disabled={currentCardIndex >= candidates.length}
           >
-            <ArrowRight className="h-8 w-8" />
+            <Check className="h-8 w-8" />
           </Button>
         </div>
         

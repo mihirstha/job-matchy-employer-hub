@@ -50,19 +50,16 @@ const Jobs = () => {
               title="Total Job Posts"
               value="12"
               icon={<Users className="h-5 w-5" />}
-              trend={{ value: 8, isPositive: true }}
             />
             <StatsCard
               title="Total Applicants"
               value="143"
               icon={<Users className="h-5 w-5" />}
-              trend={{ value: 12, isPositive: true }}
             />
             <StatsCard
               title="Total Job Views"
               value="2,340"
               icon={<Eye className="h-5 w-5" />}
-              trend={{ value: 5, isPositive: true }}
             />
           </div>
           
