@@ -11,7 +11,7 @@ const Index = () => {
     <DashboardLayout>
       <div className="flex items-center mb-8">
         <img 
-          src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+          src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
           alt="Job Matchy Nepal" 
           className="h-12 mr-4"
           onError={(e) => {

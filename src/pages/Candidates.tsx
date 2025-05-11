@@ -2,16 +2,17 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { Users, Star, Calendar, Eye } from "lucide-react";
+import { Users, Star, Calendar, Eye, Heart } from "lucide-react";
 import { CandidatesList } from "@/components/candidates/CandidatesList";
 import { CandidateProfile } from "@/components/candidates/CandidateProfile";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Candidates = () => {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | "shortlisted" | "interview" | null>(null);
+  const [activeFilter, setActiveFilter] = useState<"all" | "shortlisted" | "interview" | "liked" | null>(null);
   
   // Handle clicking on stats cards to filter candidates
-  const handleFilterChange = (filter: "all" | "shortlisted" | "interview") => {
+  const handleFilterChange = (filter: "all" | "shortlisted" | "interview" | "liked") => {
     setActiveFilter(filter === activeFilter ? null : filter);
     setSelectedCandidateId(null); // Reset selected candidate when changing filters
   };
@@ -20,7 +21,7 @@ const Candidates = () => {
     <DashboardLayout>
       <div className="flex items-center mb-8">
         <img 
-          src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+          src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
           alt="Job Matchy Nepal" 
           className="h-10 mr-4"
           onError={(e) => {
@@ -56,11 +57,14 @@ const Candidates = () => {
             isActive={activeFilter === "interview"}
           />
         </div>
-        <StatsCard
-          title="Total Job Views"
-          value="2,567"
-          icon={<Eye className="h-5 w-5" />}
-        />
+        <div onClick={() => handleFilterChange("liked")} className="cursor-pointer">
+          <StatsCard
+            title="Liked Candidates"
+            value="42"
+            icon={<Heart className="h-5 w-5" />}
+            isActive={activeFilter === "liked"}
+          />
+        </div>
       </div>
       
       {selectedCandidateId ? (
@@ -69,11 +73,52 @@ const Candidates = () => {
           onBack={() => setSelectedCandidateId(null)} 
         />
       ) : (
-        /* Candidates List */
-        <CandidatesList 
-          onViewProfile={setSelectedCandidateId} 
-          filter={activeFilter}
-        />
+        /* Candidates Tabs */
+        <Tabs defaultValue="all" value={activeFilter || "all"} className="w-full">
+          <TabsList className="grid grid-cols-4 mb-6">
+            <TabsTrigger 
+              value="all" 
+              onClick={() => handleFilterChange("all")}
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger 
+              value="shortlisted"
+              onClick={() => handleFilterChange("shortlisted")}
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              Shortlisted
+            </TabsTrigger>
+            <TabsTrigger 
+              value="interview"
+              onClick={() => handleFilterChange("interview")}
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              Interview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="liked"
+              onClick={() => handleFilterChange("liked")}
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              Liked
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all">
+            <CandidatesList onViewProfile={setSelectedCandidateId} filter="all" />
+          </TabsContent>
+          <TabsContent value="shortlisted">
+            <CandidatesList onViewProfile={setSelectedCandidateId} filter="shortlisted" />
+          </TabsContent>
+          <TabsContent value="interview">
+            <CandidatesList onViewProfile={setSelectedCandidateId} filter="interview" />
+          </TabsContent>
+          <TabsContent value="liked">
+            <CandidatesList onViewProfile={setSelectedCandidateId} filter="liked" />
+          </TabsContent>
+        </Tabs>
       )}
     </DashboardLayout>
   );

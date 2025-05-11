@@ -33,7 +33,14 @@ export function DashboardSidebar() {
       {/* Logo */}
       <div className="mb-8">
         <div className="flex items-center justify-center">
-          <span className="text-xl font-bold text-gray-900">JOB MATCHY</span>
+          <img 
+            src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
+            alt="Job Matchy Nepal" 
+            className="h-10 mb-1"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
+            }}
+          />
         </div>
         <div className="mt-1 text-center text-xs text-gray-500">
           Recruitment Simplified

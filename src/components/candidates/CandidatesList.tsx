@@ -7,7 +7,7 @@ import { MouseEvent } from "react";
 
 export interface CandidatesListProps {
   onViewProfile: (id: string) => void;
-  filter?: "all" | "shortlisted" | "interview" | null;
+  filter?: "all" | "shortlisted" | "interview" | "liked" | null;
 }
 
 export function CandidatesList({ onViewProfile, filter = null }: CandidatesListProps) {
@@ -22,6 +22,7 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "5 years",
       skills: ["React", "JavaScript", "CSS"],
       status: "shortlisted",
+      isMatched: true,
     },
     {
       id: "2",
@@ -32,6 +33,7 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "3 years",
       skills: ["Figma", "Adobe XD", "Sketch"],
       status: "interview",
+      isMatched: true,
     },
     {
       id: "3",
@@ -42,6 +44,7 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "4 years",
       skills: ["Node.js", "MongoDB", "React"],
       status: "new",
+      isMatched: false,
     },
     {
       id: "4",
@@ -52,6 +55,7 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "2 years",
       skills: ["Python", "Django", "PostgreSQL"],
       status: "shortlisted",
+      isMatched: true,
     },
     {
       id: "5",
@@ -62,6 +66,7 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "3 years",
       skills: ["Flutter", "Dart", "Firebase"],
       status: "interview",
+      isMatched: true,
     },
     {
       id: "6",
@@ -72,6 +77,29 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
       experience: "6 years",
       skills: ["Agile", "Scrum", "Product Development"],
       status: "new",
+      isMatched: false,
+    },
+    {
+      id: "7",
+      name: "Rajesh Karki",
+      avatar: "https://i.pravatar.cc/150?img=15",
+      position: "DevOps Engineer",
+      location: "Kathmandu, Nepal",
+      experience: "4 years",
+      skills: ["Docker", "Kubernetes", "AWS", "CI/CD"],
+      status: "liked",
+      isMatched: false,
+    },
+    {
+      id: "8",
+      name: "Sarita Shrestha",
+      avatar: "https://i.pravatar.cc/150?img=9",
+      position: "Content Writer",
+      location: "Bhaktapur, Nepal",
+      experience: "3 years",
+      skills: ["Copywriting", "SEO", "Content Strategy"],
+      status: "liked",
+      isMatched: true,
     },
   ];
   
@@ -93,6 +121,8 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
         return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Shortlisted</Badge>;
       case 'interview':
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Interview</Badge>;
+      case 'liked':
+        return <Badge className="bg-pink-100 text-pink-800 hover:bg-pink-100">Liked</Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">New</Badge>;
     }
@@ -118,7 +148,9 @@ export function CandidatesList({ onViewProfile, filter = null }: CandidatesListP
                     </Avatar>
                     
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-lg blur-sm select-none">Candidate</h3>
+                      <h3 className={`font-semibold text-lg ${!candidate.isMatched ? 'blur-sm select-none' : ''}`}>
+                        {candidate.isMatched ? candidate.name : "Candidate"}
+                      </h3>
                       <div className="flex flex-col md:flex-row md:items-center gap-2 text-sm">
                         <p className="text-gray-700">{candidate.position}</p>
                         <span className="hidden md:inline text-gray-400">•</span>

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
@@ -348,18 +349,20 @@ const TinderCard = ({
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <div className="flex items-end justify-between">
               <div>
-                <h2 className={`text-3xl font-bold ${!isMatched ? 'blur-sm select-none' : ''}`}>
-                  {isMatched ? candidate.name : "Candidate"}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className={`text-3xl font-bold ${!isMatched ? 'blur-sm select-none' : ''}`}>
+                    {isMatched ? candidate.name : "Candidate"}
+                  </h2>
+                  <div className="flex items-center justify-center min-w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full px-2">
+                    {candidate.age}
+                  </div>
+                </div>
                 <p className="text-xl">{candidate.jobTitle}</p>
                 <div className="flex items-center gap-2 text-gray-200 mt-1">
                   <span>{candidate.location}</span>
                   <span className="text-lg">•</span>
                   <span>{candidate.experience}</span>
                 </div>
-              </div>
-              <div className="flex items-center justify-center w-10 h-10 bg-gray-200/30 backdrop-blur-sm rounded-full">
-                {candidate.age}
               </div>
             </div>
             
@@ -496,10 +499,6 @@ const SwipePage = () => {
     }
   };
   
-  const handleSendMessage = () => {
-    navigate("/payment");
-  };
-  
   const resetFilters = () => {
     setCandidates(allCandidates);
     setFilters(null);
@@ -516,16 +515,17 @@ const SwipePage = () => {
   return (
     <DashboardLayout>
       {/* Header with Logo and Filter */}
-      <div className="fixed top-16 left-0 right-0 z-30 bg-white shadow-sm px-4 md:px-6 py-3 flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/c3933293-e878-492e-bdd7-253daf53886d.png" 
+            src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
             alt="Job Matchy Nepal" 
-            className="h-10"
+            className="h-10 mr-4"
             onError={(e) => {
               e.currentTarget.src = "https://via.placeholder.com/100x40?text=Job+Matchy+Nepal";
             }}
           />
+          <h1 className="text-2xl font-bold text-secondary-700">Swipe Candidates</h1>
         </div>
         
         <Button 
@@ -540,7 +540,7 @@ const SwipePage = () => {
       
       {/* Active filters display */}
       {filters && (
-        <div className="fixed top-28 left-0 right-0 z-20 px-4 md:px-6 pb-2">
+        <div className="mb-6">
           <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Active Filters</span>
@@ -585,7 +585,7 @@ const SwipePage = () => {
       )}
 
       {/* Main swipe area */}
-      <div className={`flex flex-col items-center justify-center min-h-[calc(100vh-170px)] pt-20 pb-6 px-4 ${filters ? 'mt-12' : 'mt-0'}`}>
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-230px)]">
         <div className="relative w-full max-w-md h-[70vh]">
           {candidates.map((candidate, index) => (
             index >= currentCardIndex && index < currentCardIndex + 3 && (
