@@ -6,7 +6,6 @@ import {
   Home,
   Briefcase,
   Users,
-  Calendar,
   Bookmark,
   Settings,
 } from "lucide-react";
@@ -19,7 +18,6 @@ export function DashboardSidebar() {
     { label: "Overview", path: "/", icon: Home },
     { label: "Jobs", path: "/jobs", icon: Briefcase },
     { label: "Candidates", path: "/candidates", icon: Users },
-    { label: "Calendar", path: "/calendar", icon: Calendar },
     { label: "Saved", path: "/saved", icon: Bookmark },
     { label: "Settings", path: "/settings", icon: Settings },
   ];

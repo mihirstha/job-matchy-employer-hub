@@ -3,18 +3,22 @@ import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Users, Heart, Star } from "lucide-react";
-import { CandidatesList } from "@/components/candidates/CandidatesList";
-import { CandidateProfile } from "@/components/candidates/CandidateProfile";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Candidates = () => {
-  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | "shortlisted" | "liked" | null>(null);
+  const navigate = useNavigate();
   
-  // Handle clicking on stats cards to filter candidates
-  const handleFilterChange = (filter: "all" | "shortlisted" | "liked") => {
-    setActiveFilter(filter === activeFilter ? null : filter);
-    setSelectedCandidateId(null); // Reset selected candidate when changing filters
+  // Sample jobs data
+  const jobs = [
+    { id: "job1", title: "Frontend Developer", location: "Kathmandu", applicants: 12 },
+    { id: "job2", title: "UI/UX Designer", location: "Pokhara", applicants: 8 },
+    { id: "job3", title: "Full Stack Developer", location: "Kathmandu", applicants: 15 },
+  ];
+  
+  const handleViewJobCandidates = (jobId: string) => {
+    navigate(`/job/${jobId}`);
   };
   
   return (
@@ -31,77 +35,53 @@ const Candidates = () => {
         <h1 className="text-2xl font-bold text-secondary-700">Candidates</h1>
       </div>
       
-      {/* Stats Section - Updated to only include total applicants, liked candidates, and shortlisted candidates */}
+      {/* Stats Section */}
       <div className="grid gap-6 md:grid-cols-3 mb-8">
-        <div onClick={() => handleFilterChange("all")} className="cursor-pointer">
-          <StatsCard
-            title="Total Applications"
-            value="143"
-            icon={<Users className="h-5 w-5" />}
-            isActive={activeFilter === "all"}
-          />
-        </div>
-        <div onClick={() => handleFilterChange("liked")} className="cursor-pointer">
-          <StatsCard
-            title="Liked Candidates"
-            value="42"
-            icon={<Heart className="h-5 w-5" />}
-            isActive={activeFilter === "liked"}
-          />
-        </div>
-        <div onClick={() => handleFilterChange("shortlisted")} className="cursor-pointer">
-          <StatsCard
-            title="Shortlisted"
-            value="28"
-            icon={<Star className="h-5 w-5" />}
-            isActive={activeFilter === "shortlisted"}
-          />
-        </div>
+        <StatsCard
+          title="Total Applications"
+          value="143"
+          icon={<Users className="h-5 w-5" />}
+        />
+        <StatsCard
+          title="Liked Candidates"
+          value="42"
+          icon={<Heart className="h-5 w-5" />}
+        />
+        <StatsCard
+          title="Shortlisted"
+          value="28"
+          icon={<Star className="h-5 w-5" />}
+        />
       </div>
       
-      {selectedCandidateId ? (
-        <CandidateProfile 
-          candidateId={selectedCandidateId} 
-          onBack={() => setSelectedCandidateId(null)} 
-        />
-      ) : (
-        /* Candidates Tabs */
-        <Tabs defaultValue="all" value={activeFilter || "all"} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6">
-            <TabsTrigger 
-              value="all" 
-              onClick={() => handleFilterChange("all")}
-              className="data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              All
-            </TabsTrigger>
-            <TabsTrigger 
-              value="liked"
-              onClick={() => handleFilterChange("liked")}
-              className="data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              Liked
-            </TabsTrigger>
-            <TabsTrigger 
-              value="shortlisted"
-              onClick={() => handleFilterChange("shortlisted")}
-              className="data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              Shortlisted
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all">
-            <CandidatesList onViewProfile={setSelectedCandidateId} filter="all" />
-          </TabsContent>
-          <TabsContent value="liked">
-            <CandidatesList onViewProfile={setSelectedCandidateId} filter="liked" />
-          </TabsContent>
-          <TabsContent value="shortlisted">
-            <CandidatesList onViewProfile={setSelectedCandidateId} filter="shortlisted" />
-          </TabsContent>
-        </Tabs>
-      )}
+      {/* Jobs list to view candidates */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Select a job to view candidates</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {jobs.map(job => (
+              <Card key={job.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <h3 className="font-medium">{job.title}</h3>
+                  <p className="text-sm text-gray-500">{job.location}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-sm text-blue-600 font-medium">{job.applicants} Applicants</span>
+                    <Button 
+                      size="sm"
+                      onClick={() => handleViewJobCandidates(job.id)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      View Candidates
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </DashboardLayout>
   );
 };

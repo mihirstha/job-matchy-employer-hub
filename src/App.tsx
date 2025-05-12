@@ -7,12 +7,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Jobs from "./pages/Jobs";
 import Candidates from "./pages/Candidates";
-import CalendarPage from "./pages/CalendarPage";
 import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Payment from "./pages/Payment";
 import Support from "./pages/Support";
+import Messages from "./pages/Messages";
+import JobDetails from "./pages/JobDetails";
 
 const queryClient = new QueryClient();
 
@@ -25,8 +26,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/job/:jobId" element={<JobDetails />} />
           <Route path="/candidates" element={<Candidates />} />
-          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/payment" element={<Payment />} />

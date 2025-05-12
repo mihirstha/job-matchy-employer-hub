@@ -1,20 +1,26 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { JobPostingsList } from "@/components/dashboard/JobPostingsList";
 import { Button } from "@/components/ui/button";
 import { Users, Eye, Plus } from "lucide-react";
-import { JobPostingForm } from "@/components/jobs/JobPostingForm";
+import { EnhancedJobPostingForm } from "@/components/jobs/EnhancedJobPostingForm";
 import { useToast } from "@/hooks/use-toast";
 
 const Jobs = () => {
   const [showNewJobForm, setShowNewJobForm] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleNewJobClick = () => {
     setShowNewJobForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  const handleJobClick = (jobId: string) => {
+    navigate(`/job/${jobId}`);
   };
 
   return (
@@ -42,7 +48,7 @@ const Jobs = () => {
       </div>
       
       {showNewJobForm ? (
-        <JobPostingForm 
+        <EnhancedJobPostingForm 
           onCancel={() => setShowNewJobForm(false)}
           onSuccess={() => {
             setShowNewJobForm(false);
@@ -54,16 +60,11 @@ const Jobs = () => {
         />
       ) : (
         <>
-          {/* Stats Section - Removed growth percentages */}
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
+          {/* Stats Section */}
+          <div className="grid gap-6 md:grid-cols-2 mb-8">
             <StatsCard
               title="Total Job Posts"
               value="12"
-              icon={<Users className="h-5 w-5" />}
-            />
-            <StatsCard
-              title="Total Applicants"
-              value="143"
               icon={<Users className="h-5 w-5" />}
             />
             <StatsCard
@@ -73,8 +74,8 @@ const Jobs = () => {
             />
           </div>
           
-          {/* Job Listings */}
-          <JobPostingsList onNewJobClick={handleNewJobClick} />
+          {/* Job Listings with clickable jobs */}
+          <JobPostingsList onNewJobClick={handleNewJobClick} onJobClick={handleJobClick} />
         </>
       )}
     </DashboardLayout>
