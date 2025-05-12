@@ -54,7 +54,7 @@ const Jobs = () => {
         />
       ) : (
         <>
-          {/* Stats Section */}
+          {/* Stats Section - Removed growth percentages */}
           <div className="grid gap-6 md:grid-cols-3 mb-8">
             <StatsCard
               title="Total Job Posts"

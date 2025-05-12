@@ -21,7 +21,7 @@ const Index = () => {
         <h1 className="text-2xl font-bold text-secondary-700">Employer Dashboard</h1>
       </div>
       
-      {/* Stats Section */}
+      {/* Stats Section - Removed growth percentages */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Job Posts"

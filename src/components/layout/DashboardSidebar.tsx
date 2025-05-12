@@ -7,10 +7,8 @@ import {
   Briefcase,
   Users,
   Calendar,
-  MessageSquare,
   Bookmark,
   Settings,
-  Heart
 } from "lucide-react";
 
 export function DashboardSidebar() {
@@ -21,9 +19,7 @@ export function DashboardSidebar() {
     { label: "Overview", path: "/", icon: Home },
     { label: "Jobs", path: "/jobs", icon: Briefcase },
     { label: "Candidates", path: "/candidates", icon: Users },
-    { label: "Swipe Candidates", path: "/swipe", icon: Heart },
     { label: "Calendar", path: "/calendar", icon: Calendar },
-    { label: "Messages", path: "/messages", icon: MessageSquare },
     { label: "Saved", path: "/saved", icon: Bookmark },
     { label: "Settings", path: "/settings", icon: Settings },
   ];

@@ -8,12 +8,10 @@ import Index from "./pages/Index";
 import Jobs from "./pages/Jobs";
 import Candidates from "./pages/Candidates";
 import CalendarPage from "./pages/CalendarPage";
-import Messages from "./pages/Messages";
 import Saved from "./pages/Saved";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Payment from "./pages/Payment";
-import SwipePage from "./pages/SwipePage";
 import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
@@ -28,9 +26,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/candidates" element={<Candidates />} />
-          <Route path="/swipe" element={<SwipePage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/messages" element={<Messages />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/payment" element={<Payment />} />
