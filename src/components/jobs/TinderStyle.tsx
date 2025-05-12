@@ -11,9 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface TinderStyleProps {
   jobId: string;
+  onReviewComplete?: () => void;
 }
 
-export function TinderStyle({ jobId }: TinderStyleProps) {
+export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isVideoResumeOpen, setIsVideoResumeOpen] = useState(false);
@@ -30,7 +31,7 @@ export function TinderStyle({ jobId }: TinderStyleProps) {
       photo: "https://i.pravatar.cc/300?img=11",
       contactEmail: "rahul.patel@example.com",
       contactPhone: "+977 9801234567",
-      lastCompany: "Tech Solutions Nepal",
+      jobTitle: "Frontend Developer",
       experience: "5 years",
       education: "Bachelor in Computer Science",
       institution: "Kathmandu University",
@@ -48,7 +49,7 @@ export function TinderStyle({ jobId }: TinderStyleProps) {
       photo: "https://i.pravatar.cc/300?img=5",
       contactEmail: "priya.sharma@example.com",
       contactPhone: "+977 9802345678",
-      lastCompany: "Design Hub",
+      jobTitle: "UI/UX Designer",
       experience: "3 years",
       education: "Master's in Design",
       institution: "Nepal Art Academy",
@@ -66,7 +67,7 @@ export function TinderStyle({ jobId }: TinderStyleProps) {
       photo: "https://i.pravatar.cc/300?img=12",
       contactEmail: "ankit.gupta@example.com",
       contactPhone: "+977 9803456789",
-      lastCompany: "WebDev Nepal",
+      jobTitle: "Full Stack Developer",
       experience: "4 years",
       education: "Bachelor in Information Technology",
       institution: "Tribhuvan University",
@@ -97,6 +98,9 @@ export function TinderStyle({ jobId }: TinderStyleProps) {
         title: "No more candidates",
         description: "You've reviewed all candidates for this job.",
       });
+      if (onReviewComplete) {
+        onReviewComplete();
+      }
     }
   };
 
@@ -165,7 +169,7 @@ export function TinderStyle({ jobId }: TinderStyleProps) {
                         
                         <div className="mt-1 space-y-1">
                           <div className="flex items-center gap-2 text-gray-200">
-                            <span>{candidates[currentCardIndex].lastCompany}</span>
+                            <span>{candidates[currentCardIndex].jobTitle}</span>
                           </div>
                           
                           <div className="flex flex-wrap items-center gap-2 text-gray-200">

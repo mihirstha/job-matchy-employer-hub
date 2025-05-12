@@ -6,15 +6,17 @@ import { Users, Heart, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 const Candidates = () => {
   const navigate = useNavigate();
   
   // Sample jobs data
   const jobs = [
-    { id: "job1", title: "Frontend Developer", location: "Kathmandu", applicants: 12 },
-    { id: "job2", title: "UI/UX Designer", location: "Pokhara", applicants: 8 },
-    { id: "job3", title: "Full Stack Developer", location: "Kathmandu", applicants: 15 },
+    { id: "1", title: "Senior React Developer", location: "Kathmandu", applicants: 24 },
+    { id: "2", title: "Product Manager", location: "Pokhara", applicants: 15 },
+    { id: "3", title: "Marketing Specialist", location: "Kathmandu", applicants: 7 },
+    { id: "4", title: "Financial Analyst", location: "Bhaktapur", applicants: 3 }
   ];
   
   const handleViewJobCandidates = (jobId: string) => {
@@ -39,7 +41,7 @@ const Candidates = () => {
       <div className="grid gap-6 md:grid-cols-3 mb-8">
         <StatsCard
           title="Total Applications"
-          value="143"
+          value="89"
           icon={<Users className="h-5 w-5" />}
         />
         <StatsCard
@@ -62,15 +64,20 @@ const Candidates = () => {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {jobs.map(job => (
-              <Card key={job.id} className="hover:shadow-md transition-shadow">
+              <Card key={job.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleViewJobCandidates(job.id)}>
                 <CardContent className="p-4">
-                  <h3 className="font-medium">{job.title}</h3>
-                  <p className="text-sm text-gray-500">{job.location}</p>
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-sm text-blue-600 font-medium">{job.applicants} Applicants</span>
+                  <h3 className="font-medium text-lg">{job.title}</h3>
+                  <p className="text-sm text-gray-500 mb-3">{job.location}</p>
+                  <div className="flex items-center justify-between">
+                    <Badge className="bg-primary/10 text-primary">
+                      {job.applicants} Applicants
+                    </Badge>
                     <Button 
                       size="sm"
-                      onClick={() => handleViewJobCandidates(job.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewJobCandidates(job.id);
+                      }}
                       className="bg-primary hover:bg-primary/90"
                     >
                       View Candidates

@@ -12,7 +12,6 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Payment from "./pages/Payment";
 import Support from "./pages/Support";
-import Messages from "./pages/Messages";
 import JobDetails from "./pages/JobDetails";
 
 const queryClient = new QueryClient();

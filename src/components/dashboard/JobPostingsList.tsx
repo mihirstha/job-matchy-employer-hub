@@ -25,9 +25,10 @@ interface JobPosting {
 
 interface JobPostingsListProps {
   onNewJobClick?: () => void;
+  onJobClick?: (jobId: string) => void;
 }
 
-export function JobPostingsList({ onNewJobClick }: JobPostingsListProps) {
+export function JobPostingsList({ onNewJobClick, onJobClick }: JobPostingsListProps) {
   const jobs: JobPosting[] = [
     {
       id: "1",
@@ -124,7 +125,12 @@ export function JobPostingsList({ onNewJobClick }: JobPostingsListProps) {
               <tr key={job.id} className="hover:bg-gray-50">
                 <td className="p-4">
                   <div className="flex flex-col">
-                    <span className="font-medium text-secondary-700">{job.title}</span>
+                    <button 
+                      className="font-medium text-secondary-700 text-left hover:underline cursor-pointer"
+                      onClick={() => onJobClick && onJobClick(job.id)}
+                    >
+                      {job.title}
+                    </button>
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <span>{job.department}</span>
                       <span>•</span>
@@ -140,7 +146,12 @@ export function JobPostingsList({ onNewJobClick }: JobPostingsListProps) {
                 <td className="p-4 text-sm">{job.location}</td>
                 <td className="p-4 text-sm">
                   <div className="flex flex-col">
-                    <span>{job.applicants} Applicants</span>
+                    <button 
+                      className="hover:underline cursor-pointer"
+                      onClick={() => onJobClick && onJobClick(job.id)}
+                    >
+                      {job.applicants} Applicants
+                    </button>
                     <span className="text-xs text-gray-500">{job.views} Views</span>
                   </div>
                 </td>
@@ -177,7 +188,10 @@ export function JobPostingsList({ onNewJobClick }: JobPostingsListProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="flex cursor-pointer items-center">
+                      <DropdownMenuItem 
+                        className="flex cursor-pointer items-center"
+                        onClick={() => onJobClick && onJobClick(job.id)}
+                      >
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </DropdownMenuItem>

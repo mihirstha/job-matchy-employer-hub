@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PricingTable } from "@/components/dashboard/PricingTable";
 import { JobPostingsList } from "@/components/dashboard/JobPostingsList";
-import { Users, Eye } from "lucide-react";
+import { Users, Eye, Bookmark, Briefcase } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -27,17 +27,22 @@ const Index = () => {
         <h1 className="text-2xl font-bold text-secondary-700">Employer Dashboard</h1>
       </div>
       
-      {/* Stats Section - Only job posts and views */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Stats Section - Total jobs, views, and bookmarks */}
+      <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Total Job Posts"
           value="12"
-          icon={<Users className="h-5 w-5" />}
+          icon={<Briefcase className="h-5 w-5" />}
         />
         <StatsCard
           title="Total Job Views"
           value="2,340"
           icon={<Eye className="h-5 w-5" />}
+        />
+        <StatsCard
+          title="Total Applicants"
+          value="89"
+          icon={<Users className="h-5 w-5" />}
         />
       </div>
       

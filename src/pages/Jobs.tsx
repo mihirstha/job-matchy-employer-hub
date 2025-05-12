@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { JobPostingsList } from "@/components/dashboard/JobPostingsList";
 import { Button } from "@/components/ui/button";
-import { Users, Eye, Plus } from "lucide-react";
+import { Users, Eye, Plus, Briefcase } from "lucide-react";
 import { EnhancedJobPostingForm } from "@/components/jobs/EnhancedJobPostingForm";
 import { useToast } from "@/hooks/use-toast";
 
@@ -61,16 +61,21 @@ const Jobs = () => {
       ) : (
         <>
           {/* Stats Section */}
-          <div className="grid gap-6 md:grid-cols-2 mb-8">
+          <div className="grid gap-6 md:grid-cols-3 mb-8">
             <StatsCard
               title="Total Job Posts"
               value="12"
-              icon={<Users className="h-5 w-5" />}
+              icon={<Briefcase className="h-5 w-5" />}
             />
             <StatsCard
               title="Total Job Views"
               value="2,340"
               icon={<Eye className="h-5 w-5" />}
+            />
+            <StatsCard
+              title="Total Applicants"
+              value="89"
+              icon={<Users className="h-5 w-5" />}
             />
           </div>
           
