@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -14,12 +13,13 @@ import { useToast } from "@/hooks/use-toast";
 interface EnhancedJobPostingFormProps {
   onCancel: () => void;
   onSuccess: () => void;
+  templateId?: string | null;
 }
 
-export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPostingFormProps) {
+export function EnhancedJobPostingForm({ onCancel, onSuccess, templateId = null }: EnhancedJobPostingFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [requireVideoResume, setRequireVideoResume] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(templateId);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [skillSearchQuery, setSkillSearchQuery] = useState("");
   const [customSkill, setCustomSkill] = useState("");

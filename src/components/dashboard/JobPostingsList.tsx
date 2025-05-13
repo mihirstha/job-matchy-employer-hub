@@ -1,5 +1,5 @@
 
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Eye, Edit, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -104,7 +104,7 @@ export function JobPostingsList({ onNewJobClick, onJobClick }: JobPostingsListPr
       <div className="flex items-center justify-between border-b p-4">
         <h3 className="text-lg font-semibold">Your Job Postings</h3>
         <Button className="bg-primary hover:bg-primary-700" onClick={onNewJobClick}>
-          New Job Post
+          <Plus className="mr-1 h-4 w-4" /> New Job Post
         </Button>
       </div>
       

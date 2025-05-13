@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { JobPostingsList } from "@/components/dashboard/JobPostingsList";
-import { Button } from "@/components/ui/button";
-import { Users, Eye, Plus, Briefcase } from "lucide-react";
+import { Users, Eye, Briefcase } from "lucide-react";
 import { EnhancedJobPostingForm } from "@/components/jobs/EnhancedJobPostingForm";
 import { useToast } from "@/hooks/use-toast";
 
@@ -37,14 +36,6 @@ const Jobs = () => {
           />
           <h1 className="text-2xl font-bold text-secondary-700">Job Postings</h1>
         </div>
-        <Button 
-          className="bg-primary hover:bg-primary/90 text-white"
-          onClick={() => setShowNewJobForm(!showNewJobForm)}
-        >
-          {showNewJobForm ? "Cancel" : <>
-            <Plus className="mr-1 h-4 w-4" /> New Job Post
-          </>}
-        </Button>
       </div>
       
       {showNewJobForm ? (

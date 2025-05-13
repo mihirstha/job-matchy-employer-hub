@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PricingTable } from "@/components/dashboard/PricingTable";
 import { JobPostingsList } from "@/components/dashboard/JobPostingsList";
-import { Users, Eye, Bookmark, Briefcase, Heart, UserCheck, Plus } from "lucide-react";
+import { Users, Eye, Bookmark, Briefcase, Heart, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EnhancedJobPostingForm } from "@/components/jobs/EnhancedJobPostingForm";
 import { useToast } from "@/hooks/use-toast";
@@ -33,14 +33,6 @@ const Index = () => {
           />
           <h1 className="text-2xl font-bold text-secondary-700">Employer Dashboard</h1>
         </div>
-        <Button 
-          className="bg-primary hover:bg-primary/90 text-white"
-          onClick={() => setShowNewJobForm(!showNewJobForm)}
-        >
-          {showNewJobForm ? "Cancel" : <>
-            <Plus className="mr-1 h-4 w-4" /> New Job Post
-          </>}
-        </Button>
       </div>
       
       {showNewJobForm ? (
@@ -87,7 +79,10 @@ const Index = () => {
           
           {/* Recent Jobs List - With clickable titles and links to candidates */}
           <div className="mt-8">
-            <JobPostingsList onJobClick={handleJobClick} />
+            <JobPostingsList 
+              onJobClick={handleJobClick} 
+              onNewJobClick={() => setShowNewJobForm(true)}
+            />
           </div>
           
           {/* Pricing Table */}
