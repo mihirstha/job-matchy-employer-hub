@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Filter, Heart, X, Video } from "lucide-react";
 import { CandidateFilters } from "@/components/candidates/CandidateFilters";
 import { VideoResumeDialog } from "@/components/candidates/VideoResumeDialog";
@@ -19,6 +20,7 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isVideoResumeOpen, setIsVideoResumeOpen] = useState(false);
   const [activeCandidate, setActiveCandidate] = useState<any>(null);
+  const [showCandidateDetail, setShowCandidateDetail] = useState(false);
   const { toast } = useToast();
 
   // Sample candidates data - in a real app, this would come from an API filtered by jobId
@@ -117,6 +119,11 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
     // In a real app, this would filter candidates based on the criteria
   };
 
+  const handleCardClick = (candidate: any) => {
+    setActiveCandidate(candidate);
+    setShowCandidateDetail(true);
+  };
+
   return (
     <div className="relative min-h-[600px]">
       <div className="mb-4 flex justify-between items-center">
@@ -144,7 +151,7 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
               exit={{ scale: 0.8, opacity: 0, x: 200 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="overflow-hidden shadow-lg">
+              <Card className="overflow-hidden shadow-lg cursor-pointer" onClick={() => handleCardClick(candidates[currentCardIndex])}>
                 {/* Card image */}
                 <div className="relative h-[400px]">
                   <img
@@ -154,7 +161,7 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   
-                  {/* Candidate info */}
+                  {/* Candidate info - simplified */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex items-end justify-between">
                       <div>
@@ -177,27 +184,8 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
                             <span className="text-lg">•</span>
                             <span>{candidates[currentCardIndex].gender}</span>
                           </div>
-                          
-                          <p className="text-sm text-gray-200">
-                            {candidates[currentCardIndex].education} - {candidates[currentCardIndex].institution}
-                          </p>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="mt-4">
-                      <p className="text-sm text-gray-200 line-clamp-2">
-                        {candidates[currentCardIndex].bio}
-                      </p>
-                    </div>
-                    
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-300">
-                        <span className="font-medium">Expected salary:</span> {candidates[currentCardIndex].expectedSalary}
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        <span className="font-medium">Preferred industry:</span> {candidates[currentCardIndex].preferredIndustry}
-                      </p>
                     </div>
                     
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -220,21 +208,30 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
                   <Button 
                     variant="outline" 
                     className="rounded-full h-16 w-16 border-2 border-red-500 text-red-500 hover:bg-red-50 p-0"
-                    onClick={() => handleSwipe("left")}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSwipe("left");
+                    }}
                   >
                     <X className="h-8 w-8" />
                   </Button>
                   
                   <Button 
                     className="rounded-full h-16 w-16 bg-blue-500 hover:bg-blue-600 text-white p-0"
-                    onClick={() => handleViewVideoResume(candidates[currentCardIndex])}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewVideoResume(candidates[currentCardIndex]);
+                    }}
                   >
                     <Video className="h-8 w-8" />
                   </Button>
                   
                   <Button 
                     className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white p-0"
-                    onClick={() => handleSwipe("right")}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSwipe("right");
+                    }}
                   >
                     <Heart className="h-8 w-8" />
                   </Button>
@@ -252,6 +249,93 @@ export function TinderStyle({ jobId, onReviewComplete }: TinderStyleProps) {
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Candidate Detail Dialog */}
+      <Dialog open={showCandidateDetail} onOpenChange={setShowCandidateDetail}>
+        <DialogContent className="sm:max-w-md md:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Candidate Profile</DialogTitle>
+          </DialogHeader>
+          {activeCandidate && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="h-24 w-24 rounded-full overflow-hidden">
+                  <img 
+                    src={activeCandidate.photo} 
+                    alt={activeCandidate.name} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h2 className={`text-xl font-bold ${!activeCandidate.isMatched ? 'blur-sm select-none' : ''}`}>
+                    {activeCandidate.isMatched ? activeCandidate.name : "Candidate"}
+                  </h2>
+                  <p className="text-gray-500">{activeCandidate.jobTitle}</p>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>{activeCandidate.age} years</span>
+                    <span>•</span>
+                    <span>{activeCandidate.gender}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Contact Email</p>
+                  <p className={`${!activeCandidate.isMatched ? 'blur-sm select-none' : ''}`}>
+                    {activeCandidate.isMatched ? activeCandidate.contactEmail : "Email hidden"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Contact Phone</p>
+                  <p className={`${!activeCandidate.isMatched ? 'blur-sm select-none' : ''}`}>
+                    {activeCandidate.isMatched ? activeCandidate.contactPhone : "Phone hidden"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Expected Salary</p>
+                  <p>{activeCandidate.expectedSalary}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Preferred Industry</p>
+                  <p>{activeCandidate.preferredIndustry}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Education</p>
+                  <p>{activeCandidate.education}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Institution</p>
+                  <p>{activeCandidate.institution}</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium text-gray-500">Bio</p>
+                <p className="text-gray-700">{activeCandidate.bio}</p>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-2">Skills</p>
+                <div className="flex flex-wrap gap-2">
+                  {activeCandidate.skills.map((skill: string, index: number) => (
+                    <Badge key={index} variant="outline">{skill}</Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="pt-4">
+                <Button className="w-full flex items-center justify-center gap-2" onClick={() => {
+                  setShowCandidateDetail(false);
+                  handleViewVideoResume(activeCandidate);
+                }}>
+                  <Video className="h-4 w-4" /> View Video Resume
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       
       {/* Filters Dialog */}
       <CandidateFilters 

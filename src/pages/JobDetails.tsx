@@ -52,13 +52,12 @@ const JobDetails = () => {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-secondary-700">Job Details</h1>
+        <h1 className="text-2xl font-bold text-secondary-700">{job.title}</h1>
       </div>
       
       {!showCandidates ? (
         <div className="space-y-6">
-          <JobDetail job={job} />
-          
+          {/* Applicants section at the top */}
           <Card>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
@@ -80,6 +79,9 @@ const JobDetails = () => {
               </p>
             </CardContent>
           </Card>
+          
+          {/* Job details section moved to the bottom */}
+          <JobDetail job={job} />
         </div>
       ) : (
         <div className="space-y-6">

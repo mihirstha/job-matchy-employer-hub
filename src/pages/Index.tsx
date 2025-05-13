@@ -27,7 +27,7 @@ const Index = () => {
         <h1 className="text-2xl font-bold text-secondary-700">Employer Dashboard</h1>
       </div>
       
-      {/* Stats Section - Total jobs, views, and bookmarks */}
+      {/* Stats Section - Total jobs, views, and applicants */}
       <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Total Job Posts"
@@ -46,7 +46,7 @@ const Index = () => {
         />
       </div>
       
-      {/* Recent Jobs List */}
+      {/* Recent Jobs List - With clickable titles and links to candidates */}
       <div className="mt-8">
         <JobPostingsList onJobClick={handleJobClick} />
       </div>

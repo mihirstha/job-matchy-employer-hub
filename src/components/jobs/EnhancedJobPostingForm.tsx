@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Check, Plus, Video, Save } from "lucide-react";
+import { Check, Plus, Video, Save, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface EnhancedJobPostingFormProps {
@@ -20,6 +20,9 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
   const [currentStep, setCurrentStep] = useState(1);
   const [requireVideoResume, setRequireVideoResume] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [skillSearchQuery, setSkillSearchQuery] = useState("");
+  const [customSkill, setCustomSkill] = useState("");
   const { toast } = useToast();
   const totalSteps = 4;
   
@@ -30,8 +33,46 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
     { id: "template3", title: "Backend Engineer", description: "Template for hiring Node.js developers" },
   ];
   
+  // Sample available skills
+  const availableSkills = [
+    // Tech skills
+    "React", "JavaScript", "TypeScript", "HTML", "CSS", "Node.js", "Python", "Java", "C#", "PHP",
+    "SQL", "MongoDB", "PostgreSQL", "MySQL", "GraphQL", "REST API", "AWS", "Azure", "Docker", "Kubernetes",
+    "Git", "CI/CD", "Redux", "Vue.js", "Angular", "Next.js", "Express", "Django", "Flask", "Spring Boot",
+    "Mobile Development", "iOS", "Android", "React Native", "Flutter", "Swift", "Kotlin",
+    
+    // Design skills
+    "UI Design", "UX Design", "Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "InDesign", 
+    "Prototyping", "Wireframing", "User Research", "Usability Testing", "Design Systems", "Design Thinking",
+    
+    // General skills
+    "Project Management", "Agile", "Scrum", "Communication", "Leadership", "Problem Solving", 
+    "Critical Thinking", "Teamwork", "Time Management", "Organization", "Adaptability", "Creativity",
+    
+    // Business skills
+    "Marketing", "Sales", "Customer Service", "Business Analysis", "Data Analysis", "SEO", "SEM", 
+    "Social Media", "Content Creation", "Copywriting", "Public Relations", "Market Research"
+  ];
+  
+  // Filter skills based on search query
+  const filteredSkills = skillSearchQuery 
+    ? availableSkills.filter(skill => 
+        skill.toLowerCase().includes(skillSearchQuery.toLowerCase()) && 
+        !selectedSkills.includes(skill)
+      )
+    : availableSkills.filter(skill => !selectedSkills.includes(skill));
+  
   const handleSelectTemplate = (templateId: string) => {
     setSelectedTemplate(templateId);
+    // If template1 is selected, pre-populate with some relevant skills
+    if (templateId === "template1") {
+      setSelectedSkills(["React", "JavaScript", "CSS", "HTML", "TypeScript"]);
+    } else if (templateId === "template2") {
+      setSelectedSkills(["UI Design", "UX Design", "Figma", "Prototyping", "Wireframing"]);
+    } else if (templateId === "template3") {
+      setSelectedSkills(["Node.js", "Express", "MongoDB", "REST API", "JavaScript"]);
+    }
+    
     toast({
       title: "Template Selected",
       description: "Job template has been loaded.",
@@ -65,6 +106,23 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
       title: "Template Saved",
       description: "This job has been saved as a template for future use.",
     });
+  };
+  
+  const handleAddSkill = (skill: string) => {
+    if (!selectedSkills.includes(skill)) {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
+  };
+  
+  const handleRemoveSkill = (skill: string) => {
+    setSelectedSkills(selectedSkills.filter(s => s !== skill));
+  };
+  
+  const handleAddCustomSkill = () => {
+    if (customSkill && !selectedSkills.includes(customSkill)) {
+      setSelectedSkills([...selectedSkills, customSkill]);
+      setCustomSkill("");
+    }
   };
   
   const renderStepIndicator = () => {
@@ -215,20 +273,70 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
         
         <div>
           <Label className="mb-2 block">Skills Required</Label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {selectedTemplate === "template1" ? (
-              <>
-                <Badge className="bg-gray-100 text-gray-800">React</Badge>
-                <Badge className="bg-gray-100 text-gray-800">JavaScript</Badge>
-                <Badge className="bg-gray-100 text-gray-800">CSS</Badge>
-              </>
+          
+          {/* Selected skills display */}
+          <div className="flex flex-wrap gap-2 mb-4 min-h-12 p-2 border rounded-md bg-gray-50">
+            {selectedSkills.length > 0 ? (
+              selectedSkills.map((skill) => (
+                <Badge 
+                  key={skill} 
+                  className="bg-primary text-white flex items-center gap-1 pl-2 pr-1 py-1"
+                >
+                  {skill}
+                  <button 
+                    className="ml-1 rounded-full hover:bg-primary-600 p-0.5"
+                    onClick={() => handleRemoveSkill(skill)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))
             ) : (
-              <span className="text-gray-500 text-sm">No skills added yet</span>
+              <span className="text-gray-500 text-sm">No skills selected yet. Please select skills below.</span>
             )}
           </div>
-          <div className="flex gap-2">
-            <Input placeholder="Add a skill" className="max-w-[200px]" />
-            <Button size="sm" variant="outline">Add</Button>
+          
+          {/* Search and add custom skill */}
+          <div className="flex gap-2 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+              <Input 
+                placeholder="Search for skills" 
+                className="pl-8"
+                value={skillSearchQuery}
+                onChange={(e) => setSkillSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Input 
+                placeholder="Add custom skill" 
+                value={customSkill}
+                onChange={(e) => setCustomSkill(e.target.value)}
+                className="max-w-[200px]"
+              />
+              <Button size="sm" onClick={handleAddCustomSkill}>Add</Button>
+            </div>
+          </div>
+          
+          {/* Available skills in a grid */}
+          <div className="max-h-60 overflow-y-auto p-2 bg-white border rounded-md">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {filteredSkills.slice(0, 24).map((skill) => (
+                <Badge 
+                  key={skill} 
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary/5 justify-center"
+                  onClick={() => handleAddSkill(skill)}
+                >
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+            {filteredSkills.length > 24 && (
+              <p className="text-center text-sm text-gray-500 mt-2">
+                + {filteredSkills.length - 24} more skills available. Use search to find them.
+              </p>
+            )}
           </div>
         </div>
       </div>
