@@ -16,13 +16,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-interface PricingFeature {
-  name: string;
-  premium: React.ReactNode;
-  normal: React.ReactNode;
-  tooltip?: string;
-}
-
 interface ExtraService {
   name: string;
   description: string;
@@ -44,48 +37,6 @@ export function PricingTable() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  const features: PricingFeature[] = [
-    {
-      name: "Price",
-      premium: "Starting from Rs 5000 per Job Post",
-      normal: "Starting from Rs 3000 per Job Post",
-    },
-    {
-      name: "Listing Duration",
-      premium: "30 Days",
-      normal: "15 Days",
-      tooltip: "How long your job posting will be visible to candidates"
-    },
-    {
-      name: "Position on App",
-      premium: (
-        <div className="flex flex-col">
-          <span>"Urgent Hiring" tag</span>
-          <span className="text-xs text-gray-500">Shown on the card</span>
-        </div>
-      ),
-      normal: (
-        <div className="flex flex-col">
-          <span>No "Urgent Hiring" tag</span>
-          <span className="text-xs text-gray-500">Shown after "Urgent Hiring" Section</span>
-        </div>
-      ),
-      tooltip: "Premium jobs appear at the top of search results with an 'Urgent Hiring' tag"
-    },
-    {
-      name: "Boost Listing",
-      premium: <CheckIcon className="h-5 w-5 text-green-500" />,
-      normal: <XIcon className="h-5 w-5 text-red-500" />,
-      tooltip: "Your job gets periodically boosted to the top of search results"
-    },
-    {
-      name: "Video Resume",
-      premium: <CheckIcon className="h-5 w-5 text-green-500" />,
-      normal: <CheckIcon className="h-5 w-5 text-green-500" />,
-      tooltip: "Access to video resumes from candidates"
-    },
-  ];
-
   const extraServices: ExtraService[] = [
     {
       name: "Manual Human Resource Introduction",
@@ -273,36 +224,6 @@ export function PricingTable() {
           </div>
         </div>
       )}
-      
-      {/* Detailed Features Table */}
-      <div className="mt-8 overflow-hidden rounded-lg border">
-        <div className="bg-gray-50 py-3 px-4">
-          <h4 className="font-medium text-secondary-700">Detailed Plan Comparison</h4>
-        </div>
-        
-        <div className="divide-y">
-          {features.map((feature, i) => (
-            <div key={i} className="py-3 px-4 hover:bg-gray-50">
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-sm">{feature.name}</p>
-              </div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <div className="bg-primary/5 rounded p-2">
-                  <p className="text-xs font-medium text-primary mb-1">Premium</p>
-                  <div className="text-sm">{feature.premium}</div>
-                </div>
-                <div className="bg-gray-50 rounded p-2">
-                  <p className="text-xs font-medium text-gray-600 mb-1">Normal</p>
-                  <div className="text-sm">{feature.normal}</div>
-                </div>
-              </div>
-              {feature.tooltip && (
-                <p className="mt-2 text-xs text-gray-500 italic">{feature.tooltip}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
       
       {/* Extra Services */}
       <div className="mt-8 border-t pt-6">

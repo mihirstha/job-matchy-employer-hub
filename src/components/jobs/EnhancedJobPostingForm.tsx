@@ -54,6 +54,14 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
     "Social Media", "Content Creation", "Copywriting", "Public Relations", "Market Research"
   ];
   
+  // Skill categories for better organization
+  const skillCategories = [
+    { name: "Technical", skills: ["React", "JavaScript", "TypeScript", "HTML", "CSS", "Node.js", "Python", "Java"] },
+    { name: "Design", skills: ["UI Design", "UX Design", "Figma", "Adobe XD", "Sketch", "Photoshop"] },
+    { name: "Soft Skills", skills: ["Communication", "Leadership", "Problem Solving", "Teamwork"] },
+    { name: "Business", skills: ["Marketing", "Sales", "Customer Service", "Business Analysis"] },
+  ];
+  
   // Filter skills based on search query
   const filteredSkills = skillSearchQuery 
     ? availableSkills.filter(skill => 
@@ -275,12 +283,12 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
           <Label className="mb-2 block">Skills Required</Label>
           
           {/* Selected skills display */}
-          <div className="flex flex-wrap gap-2 mb-4 min-h-12 p-2 border rounded-md bg-gray-50">
+          <div className="flex flex-wrap gap-2 mb-4 min-h-12 p-3 border rounded-md bg-gray-50">
             {selectedSkills.length > 0 ? (
               selectedSkills.map((skill) => (
                 <Badge 
                   key={skill} 
-                  className="bg-primary text-white flex items-center gap-1 pl-2 pr-1 py-1"
+                  className="bg-primary text-white flex items-center gap-1 pl-3 pr-2 py-1.5"
                 >
                   {skill}
                   <button 
@@ -318,26 +326,53 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess }: EnhancedJobPosti
             </div>
           </div>
           
-          {/* Available skills in a grid */}
-          <div className="max-h-60 overflow-y-auto p-2 bg-white border rounded-md">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {filteredSkills.slice(0, 24).map((skill) => (
-                <Badge 
-                  key={skill} 
-                  variant="outline"
-                  className="cursor-pointer hover:bg-primary/5 justify-center"
-                  onClick={() => handleAddSkill(skill)}
-                >
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-            {filteredSkills.length > 24 && (
-              <p className="text-center text-sm text-gray-500 mt-2">
-                + {filteredSkills.length - 24} more skills available. Use search to find them.
-              </p>
-            )}
+          {/* Skills by categories - Tinder-style UI */}
+          <div className="space-y-4">
+            {skillCategories.map((category, idx) => (
+              <div key={idx} className="bg-white border rounded-md p-3">
+                <h4 className="font-medium mb-2 text-secondary-600">{category.name}</h4>
+                <div className="flex flex-wrap gap-2">
+                  {category.skills.map((skill) => (
+                    <Badge 
+                      key={skill} 
+                      variant={selectedSkills.includes(skill) ? "default" : "outline"}
+                      className={`cursor-pointer transition-all ${
+                        selectedSkills.includes(skill) 
+                          ? "bg-primary text-white" 
+                          : "hover:bg-primary/10"
+                      }`}
+                      onClick={() => selectedSkills.includes(skill) 
+                        ? handleRemoveSkill(skill) 
+                        : handleAddSkill(skill)
+                      }
+                    >
+                      {skill}
+                      {selectedSkills.includes(skill) && <Check className="ml-1 h-3 w-3" />}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
+          
+          {/* Popular skills or searched skills */}
+          {skillSearchQuery && filteredSkills.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium mb-2 text-secondary-600">Search Results</h4>
+              <div className="flex flex-wrap gap-2">
+                {filteredSkills.slice(0, 15).map((skill) => (
+                  <Badge 
+                    key={skill} 
+                    variant="outline"
+                    className="cursor-pointer hover:bg-primary/10"
+                    onClick={() => handleAddSkill(skill)}
+                  >
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
