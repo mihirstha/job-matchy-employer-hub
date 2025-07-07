@@ -56,7 +56,7 @@ const Login = () => {
         <div className="hidden lg:flex flex-col items-center justify-center space-y-8 p-8">
           <div className="flex items-center space-x-4 mb-8">
             <img 
-              src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
+              src="/lovable-uploads/logo-no-bg.png" 
               alt="Job Matchy Nepal" 
               className="h-12"
               onError={(e) => {
@@ -67,19 +67,22 @@ const Login = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Hire the <span className="text-primary border-b-4 border-primary">Best Fit</span>
+              <span className="text-primary border-b-4 border-primary">Swipe, Shortlist, Select</span>
             </h1>
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-              Sort, Shortlist and Select
+              Hiring Made Easier
             </h2>
-            <p className="text-gray-600 text-lg">
-              It's faster, easier and organized with Job Matchy AI
+            <p className="text-gray-600 text-lg mb-2">
+              Experience the future of recruitment with Job Matchy Nepal
+            </p>
+            <p className="text-primary font-medium text-base">
+              Video Resumes • Real Connections • Perfect Matches
             </p>
           </div>
 
           <div className="flex justify-center">
             <img 
-              src="/lovable-uploads/977dd81a-2254-4d99-8fef-65064dd72568.png" 
+              src="/lovable-uploads/mascot-no-bg.png" 
               alt="Job Matchy Mascot" 
               className="w-48 h-48 object-contain"
             />
@@ -92,7 +95,7 @@ const Login = () => {
             <CardHeader className="text-center pb-6">
               <div className="flex justify-center mb-4 lg:hidden">
                 <img 
-                  src="/lovable-uploads/d27daf70-5626-4ac2-a85d-6bf52bf94ef3.png" 
+                  src="/lovable-uploads/logo-no-bg.png" 
                   alt="Job Matchy Nepal" 
                   className="h-10"
                 />
