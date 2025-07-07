@@ -23,6 +23,9 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess, templateId = null 
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [skillSearchQuery, setSkillSearchQuery] = useState("");
   const [customSkill, setCustomSkill] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedArea, setSelectedArea] = useState<string>("");
   const { toast } = useToast();
   const totalSteps = 4;
   
@@ -61,6 +64,191 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess, templateId = null 
     { name: "Soft Skills", skills: ["Communication", "Leadership", "Problem Solving", "Teamwork"] },
     { name: "Business", skills: ["Marketing", "Sales", "Customer Service", "Business Analysis"] },
   ];
+  
+  // Nepal location data
+  const locationData = {
+    "Bagmati Province": {
+      "Banepa": ["Banepa Chowk Area", "Basghari Area", "Bhainsepati Area", "Budol Area", "Chandeshwori Temple Area", "Dhulikhel Area", "Kathmandu University Area", "Nala", "Naya Basti Area", "Sanga", "Tindobato Area", "Ugratara Janagal Bus Stop Area"],
+      "Bhaktapur": ["Balkot Area", "Biruwa Buspark Area", "Bode", "Duwakot", "Gaththaghar Area", "Jagati Area", "Kamalbinayak Area", "Katunje Area", "Kausaltar Area", "Kharipati", "Lohakanthali Area", "New Thimi", "Old Thimi", "Palanse", "Sallaghari Area", "Sano Thimi Area", "Sirutar", "Suryabinayak Area"],
+      "Bharatpur": ["Airport Area", "Barhaghare Area", "Basant Chowk Area", "Baseni Area", "Belchowk Area", "Bhojad Area", "Birendra Campus Area", "Buspark Area", "Cancer Hospital Area", "Champa Chaur Area", "Chanauli", "Chaubiskoti Area", "Fulbari", "Furti Chowk", "Gauriganj Area", "Hakim Chowk Area", "Indradev Marga Area", "Jalma Hall Area", "Jugedi Area", "Junhall Road", "Kamal Nagar Area", "Krishnapur Area", "Lankhu Area", "Lions Chowk Area", "Mangalpur", "Munal Chowk Area", "Narayani Path Area", "Paras Buspark Area", "Pokhara Buspark Area", "Putalisadak Area"],
+      "Bhimeshwor - Charikot": ["Dolakha Bazar Area", "Charihang"],
+      "Bidur": ["Buspark Chowk", "Bidur Chowk", "Colony Area", "Trishuli Bazar"],
+      "Hetauda": ["Bastipur", "Buddha Chowk", "Cement Factory Area", "Chauki Tole Area", "China Quarters Area", "Eye Hospital Area", "Forestry Institute Area", "Hatiya - Chisapani Area", "Hetauda Bus Park Area", "Hetauda Industrial Estate", "Hupra Chaur Area", "Kamal Dada", "Kamane", "Makwanpur Campus Area", "Manahari Bazar", "Nawalpur", "Padam Pokhari", "Rajaiya", "Ratomate Bazar Area", "Sanopokhara Area", "Seema Chowk Area", "TCN Area", "Thana Bharyang Area", "Unilever Factory Area"],
+      "Kalika": ["Gunjaman Singh Memorial Hospital Area", "Jutpani Chowk", "Jirauna Chowk", "Kholesimal", "Subba Chowk"],
+      "Kathmandu Metro 1 - Naxal Area": ["Durbarmarg", "Naxal Bhagwati Bahal Area", "Naxal Narayan Chour"],
+      "Kathmandu Metro 10 - New Baneshwor Area": ["Apex College Area - Pipal Bot", "Bijuli Bazar", "Ekta Marg", "New Baneshwor Chowk", "Ratna Rajya Area", "Shankhamul Area", "Thapagaun Area", "People's Dental Campus Area", "Sorhakhutte"],
+      "Kathmandu Metro 11 - Maitighar Area": ["Babarmahal", "Maitighar"],
+      "Kathmandu Metro 12 - Teku Area": ["Teku", "Thapathali", "Tripureshwor"],
+      "Kathmandu Metro 13 - Kalimati Area": ["Bafal", "Kalimati", "Soalteemode", "Tahachal"],
+      "Kathmandu Metro 14 - Kuleshwor Area": ["Balkhu", "Kuleshwor", "Ravi Bhawan"],
+      "Kathmandu Metro 15 - Swayambhu Area": ["Bahiti", "Chhauni", "Dallu", "Swayambhu - Bhuikhel"],
+      "Kathmandu Metro 16 - Nayabazar Area": ["Balaju - Bypass", "Balaju Chowk", "Balaju - Machha Pokhari", "Balaju Chauki", "Banasthali", "Banasthali Dhungedhara", "Kaldhara", "Khusibu", "Kimdol", "Paknajol", "Sobhabhagawati", "Tankeshwor"],
+      "Kathmandu Metro 17 - Chhetrapati Area": ["Chhetrapati", "Dhalko", "Dhobichaur", "Bijeshwori"],
+      "Kathmandu Metro 18 - Raktakali Area": ["Bhurungkhel", "Raktakali"],
+      "Kathmandu Metro 19 - Hanumandhoka Area": ["Hanumandhoka", "Tamsipakha"],
+      "Kathmandu Metro 2 - Lazimpat Area": ["Lazimpat", "Pabitra Workshop Area"],
+      "Kathmandu Metro 20 - Marutol Area": ["Hattisar Area", "Marutole"],
+      "Kathmandu Metro 21 - Lagantole Area": ["Lagantole"],
+      "Kathmandu Metro 22 - Newroad Area": ["Khichhapokhari", "Newroad"],
+      "Kathmandu Metro 23 - Basantapur Area": ["Naradevi", "Basantapur"],
+      "Kathmandu Metro 24 - Indrachowk Area": ["Kilagal", "Indrachowk"],
+      "Kathmandu Metro 25 - Ason Area": ["Kapurdhara", "Ason"],
+      "Kathmandu Metro 26 - Samakhusi Area": ["Gongabu Chowk", "Samakhusi"],
+      "Kathmandu Metro 26 - Thamel Area": ["Galkhopakha", "Thamel"],
+      "Kathmandu Metro 27 - Bhotahiti Area": ["Bhotahiti"],
+      "Kathmandu Metro 28 - Bagbazar Area": ["Bagbazar"],
+      "Kathmandu Metro 28 - Kamaladi Area": ["Bir Hospital", "Kamaladi"],
+      "Kathmandu Metro 29 - Anamnagar Area": ["Anamnagar", "Ghattekulo"],
+      "Kathmandu Metro 29 - Putalisadak Area": ["Bhaktapur Buspark", "Putalisadak"],
+      "Kathmandu Metro 3 - Baluwatar Area": ["Baluwatar", "Lamtangin Marg"],
+      "Kathmandu Metro 30 - Maitidevi Area": ["Dhobichaur", "Maitidevi"],
+      "Kathmandu Metro 31 - Min Bhawan Area": ["Dillibazar Pipalbot", "Min Bhawan"],
+      "Kathmandu Metro 32 - Koteshwor Area": ["Aloknagar", "Koteshwor Chowk"],
+      "Kathmandu Metro 32 - Tinkune Area": ["Jadibuti Area", "Tinkune"],
+
+      "Kathmandu Metro 4 - Bishalnagar Area": ["Basundhara (inside ringroad area)", "Bishalnagar"],
+      "Kathmandu Metro 5 - Tangal Area": ["Bhatbhateni", "Tangal"],
+      "Kathmandu Metro 7 - Chabahil Area": ["Chabahil Chowk", "Narayan Gopal Chowk Area"],
+      "Kathmandu Metro 8 - Gaushala Area": ["Gaushala", "Chandol"],
+      "Kathmandu Metro 9 - Sinamangal Area": ["Airport", "Handigaun", "Chuchepati", "Jayabageshwori", "Battisputali", "Sinamangal"],
+      "Kathmandu Outside Ring Road": ["28 Kilo Area", "Jyamire", "Parsa Chaubiskoti", "36 Kilo Area", "Jwagal Area", "Bakhundole Area", "Bagdole Area", "Bich Bazar", "Bhandari Gaun", "Bhandara", "Bakular", "Army Camp Gate", "Cp Chowk", "Kharibot", "Aapghari", "Khurkhure", "Chitrasari Area", "Campus Stop Area"],
+      "Khairehani": ["Hattichowk Area"],
+      "Lalitpur Inside Ring Road": ["Ward 1 - Kupandol Area", "Ward 2 - Jhamsikhel Area", "Ward 2 - Kalopul Area", "Ward 2 - Sanepa Area", "Ward 3 - Pulchowk Area", "Ward 4 - Jawalakhel Area", "Ward 5 - Kumaripati Area", "Ward 5 - Patan Hospital Area", "Ward 6 - Kanibahal Area", "Ward 7 - Sundhara Area", "Ward 8 - Guitole Area", "Ward 9 - Balkumari Area", "Ward 9 - Chayasal Area", "Ward 10 - Chakupat Area", "Ward 11 - Banglamukhi Area", "Ward 12 - Thaina Area", "Ward 14 - Kusunti Area", "Ward 15 - Lagankhel Area", "Ward 15 - Satdobato Area", "Ward 16 - Mangalbazar Area", "Ward 17 - Gwarko Area", "Ward 19 - Macchindrabahal Area", "Ward 20 - Patandhoka Area"],
+      "Lalitpur Outside Ring Road": ["Godawari - Bajrabarahi Area", "Godawari - Botanical Garden Area", "Godawari - Chapagaun Buspark Area", "Godawari - Jharuwarasi", "Godawari - Thaiba", "Godawari - Thecho", "Karyabinayak - Chhampi", "Karyabinayak - Chunikhel", "Karyabinayak - Dhaichhap", "Karyabinayak - Khokana", "Karyabinayak - Tikabhairabh", "Lalitpur - Bhaisepati Area", "Lalitpur - Bungamati Area", "Lalitpur - Chokhel Area", "Lalitpur - Dhapakhel Area", "Lalitpur - Dholahiti", "Lalitpur - Harisiddhi Patan Area", "Lalitpur - Imadole Area", "Lalitpur - Khumaltar Area", "Lalitpur - Loha Chowk", "Lalitpur - Nakhipot Area", "Lalitpur - Nakhipot Kantipur Colony", "Lalitpur - Nakhu Area", "Lalitpur - Ranibu Area", "Lalitpur - Sanepa Indrayani Mandir", "Lalitpur - Sunakoti Area", "Mahalaxmi - Changathali", "Mahalaxmi - Lamatar Bus Stop Area", "Mahalaxmi - Lubhu", "Mahalaxmi - Tikathali"],
+      "Nilkantha - Dhading": ["Maale Bagar", "Nilkantha School Area", "Pahare Chautara"],
+      "Panauti": ["Khopasi Hydropower Reservoir Area", "Panauti Municipality Office Area", "Panauti Museum Area", "Wolachhen Bagaicha Area"],
+      "Panchkhal": ["Dhulikhel Zipline Area", "Dulalthok", "Keraghari", "Lamidanda", "Panchkhal Municipality Area", "Shree Ram Pati"],
+      "Rapti": ["Dhungrebaas", "Dhura Bazaar", "Fm Marga", "Laxman Chowk", "Milan Chowk", "Siddha Baba Chowk"],
+      "Ratnanagar": ["Sauraha Chowk", "Tadi Bazar"],
+      "Sindhuli-Kamalamai": ["Sindhuli Bus Park Area", "Sindhuli Haat Bazaar", "Tamaghat Chowk", "Zero Kilo"]
+    },
+    "Gandaki Province": {
+      "Baglung Bazaar": ["Jeep Park", "Lali Gurans Chowk", "Tiger Chowk", "Traffic Chowk", "Upallachaur", "Yatyat Karyalaya Area"],
+      "Beni": ["Birendra Chowk", "Campus Chowk", "Hospital Chowk", "Kali Pool Buspark", "New Road Area"],
+      "Bhimad": ["Bhimad Bazaar", "Male Bagar Bazaar", "Purano Bazaar"],
+      "Damauli": ["Aadikavi Bhanubhakta Campus Area", "Bhadgau", "Chapaghat", "Damauli Bazar", "Damauli Bus Station Area", "Damauli College", "Dihi Gaun", "District Hospital Area", "Immanuel Church Area", "Patan", "Vorletar Chowk"],
+      "Devchuli": ["Daldale", "Dharapani Bazaar", "Pragatinagar", "Rajahar Bazaar", "Sashwat Dham Area"],
+      "Gaindakot": ["Congress Chowk", "Gaindakot Municipality Office Area", "Ganesh Mandir Area", "Harihar Mandir", "Harkapur Area", "Kali Gandaki Bus Stop Area", "Kalika Mandir Area", "Thumsi Area"],
+      "Gorkha Bazaar": ["District Hospital Chowk", "Haramtari Chowk", "Patechaur", "Petrol Pump Area", "Purano Buspark"],
+      "Kawasoti": ["Bishnunagar", "Danda", "Gyanodaya Chowk", "Panchaknya Chowk", "Thakali Chowk", "Thana Chowk"],
+      "Kushma": ["Bhandari Tole", "Bunjee Side", "Jilla Prahari Karyala Chowk", "Khareha", "Sasatra Camp", "Shivalaya Chowk"],
+      "Lekhnath": ["Arghau Chowk", "Budibazar Chowk", "Sishuwa Chowk", "Talchowk"],
+      "Pokhara": ["Amarsingh Chowk Area", "Bagar Area", "Baglung Buspark Area", "Baidam Area", "Traffic Chowk", "Birauta Area", "Birauta Chowk Area", "Nayapul", "Saulibazzar", "Surya Nepal Factory Area"],
+      "Putalibazar": ["Badkhola Chowk", "Shahid Chowk"],
+      "Shuklagandaki": ["Belchautara", "Dhor Phedi Area", "Dulegaunda Bazaar", "Khairenitar Bazar", "Suidibar Bus Park Area"],
+      "Sundarbazar": ["Khatrithati", "Lamjung Campus Area", "Milan Chowk", "Shiva Oil Area"],
+      "Waling": ["Bhakunde Chowk", "Bhakunde Covered Hall Area", "Buddha Tole", "Waling Bus Park Area", "Waling Multiple Campus Area", "WCCI Chowk"]
+    },
+    "Karnali Province": {
+      "Bheriganga": ["Bahunichaur", "Chhinchu", "Jahare Bazaar", "Ramghat"],
+      "Birendranagar - Surkhet": ["Army Camp Area", "Dhuliyabit Area", "Kakrebihar Area", "Mangalgadhi Chowk Area", "Radio Nepal Area", "Surkhet Hospital Area", "Uttarganga Area"],
+      "Lekbeshi": ["Dashrathpur", "Salli Bazar"]
+    },
+    "Koshi Province": {
+      "Arjundhara": ["Arjundhara Municipality Office Area", "Bhaisabadi", "Laxmipur Bus Stop Area", "Post Office Area"],
+      "Belbari": ["Aadarsha Boarding School Area", "Belbari Health Post Area", "Belbari Multiple Campus Area", "Belbari Paschhim Bus Park Area", "Betana Wetland", "Bhaunne Bazaar", "Dangihat Rangashala Area", "Laxmi Marga Chowk", "Malpot Line", "Sahakari Tole"],
+      "Bhadrapur": ["Bhadrapur Buspark Area", "Campus Mode Area", "Dukhi Tole Area", "Giri Chowk Area", "Kirat Colony Area", "Mechi Hospital Area"],
+      "Biratnagar": ["Roadcess/Koshi Project Area", "Aarti Strip Factory Area", "Bargacchi Chowk Area", "Bhirkuti Chowk Area", "Buddha Chowk Area", "Campus Road Area", "DPS School Area", "Haat Khola Area", "Hospital Chowk", "Ikrahi Area", "Jaljala Chowk Area", "Janpathtole Area", "Jhorahat Area", "Kanchanbari Area", "Katahari Area", "Keshaliya Rampur", "Kharji Kohobara", "Meghabari Area"],
+      "Birtamod": ["Atithi Sadan Area", "Beldangi Chowk Area", "Bhagwan Chowk", "Birtabazar Area", "Birtamod Buspark Area", "Buttabari Area", "Charpane Area", "Dharmakata Road Area", "Garamuni Campus Area", "Hanuman Central Area", "Harkalal Marga Area", "Heaven Water Park Area", "Jatrubadi Chowk Area", "Kankai Road Area", "Mahananda Chowk", "Mechi Eye Hospital Area"],
+      "Chandragadi": ["Bhaire Chowk", "Chaitu Mandir Area", "Chandragadi Airport Area", "Devkota Chowk Area", "Dhanushmod Area", "Jagriti Nagar", "Kendramode Area", "Lekhnath Chowk Area", "Mahendra Park Area", "Makalu Tole Area", "New Amda Hospital Area", "Sangam Chowk Area", "Shanti Chowk Area", "Shanti Marga Area"],
+      "Damak": ["Beldangi Area", "Buddha Chowk Area", "Damak Buspark Area", "Damak Multiple Campus Area", "Falgunanda Chowk Area", "Gumaune Area", "Havildar Chowk Area", "Krishna Mandir Area"],
+      "Dhankuta": ["Adalat Road", "Dadagaun Football Ground", "Dhankuta Bus Park Area", "Dhankuta Multiple Campus Area", "Dhankuta Stadium", "Heli Pad Area", "Hile", "Mangalbarey Area", "Phushre Area", "Purano Bazaar", "Putali Line", "Shyam Chowk Area", "Tinkune Area", "Zero Point Area"],
+      "Dharan": ["Bagarkot Area", "Bargachhi Area", "Bhanu Chowk Area", "Bhotepul Area", "Bijayapur Area", "BP Health Science Institute Area", "Chata Chowk Area", "Dharan Railway Area", "Dharan Stadium Area"],
+      "Duhabi": ["Ball Statue", "Duhabi Bus Park Area", "Sonapur Bus Park Area"],
+      "Gauradaha": ["Beldangi Chowk", "Campus Mode", "Dhobiniya Chowk", "Dipu Chowk", "Gauradaha Bazaar", "Gauriganj Bazar", "Mechi Eye Hospital Area", "Milan Chowk", "Mahendra Ratna Multiple Campus Area", "Tilkeni Mod"],
+      "Ilam": ["Bhrikuti Chowk", "Fikkal", "Ilam Bazar Area", "Ilam Bus Park Area", "Ilam Municipality Area", "Ilam View Tower Area", "Kalinaag Mandir Area", "Kharel Dada", "Labipur Area", "Pakali Area", "Pandhare Tole Area", "Suvidha Nagar", "Swagat Tole Area", "Tarahara Area", "Tax Office Area", "Traffic Chowk Area"],
+      "Inaruwa": ["Bihibare Hat Bazar", "Inaruwa Bus Stop Area", "Inaruwa Hospital Area", "Jhumka", "Sakhuwagachhi", "Simpane Pragati Tole"],
+      "Itahari": ["Army Headquarters Area", "Balgram Area", "Bhetghat Chowk", "Gaisar Area", "Halgada Chowk Area", "Hatiya Line Area", "Itahari Buspark Area", "Jhumka City Area", "Khanar City Area", "Tulasibari Playground Area"],
+      "Kakarbhitta": ["Barmeli Tole Area", "Eye Hospital Area", "Kakarbhitta Buspark Area", "Kakarbhitta Customs Area", "Post Office Area", "Pragati Tole Area", "Surunga Chowk"],
+      "Kankai": ["Champapur Playground Area", "Durgapur", "Kalisthan Chowk", "Kankai Multiple Campus Area", "Kankai Municipality Office Area", "Koti Hom Bus Park Area", "Ratna Park Area", "Sangam Tole", "Subedi Chowk"],
+      "Letang Bhogateni": ["Budhabare", "Letang Bazaar"],
+      "Pathari-Shanischare": ["Bhutanese Refugee Camp Area", "Bokre Chowk", "Buddha Chowk", "Haatkhola Bazaar", "Hasandaha Bus Stop Area", "Pathari Bazaar"],
+      "Rangeli": ["Aitabare Chowk", "Drabesha", "Janata Multiple Campus Area", "Rangeli Bazaar", "Rangeli Hospital Area", "Sombare Bazar", "Tribhuwan Chowk"],
+      "Ratuwamai": ["Aamtola Bazaar", "Damravitta Bazaar", "Itahara Chowk", "Sijuwa Chowk"],
+      "Shivasatakshi": ["Aambari Chowk", "Dohamana Pashu Bazar"],
+      "Sunawarshi": ["Amardaha", "Dainiya", "Dohamana Pashu Bazar"],
+      "Sundar Haraincha": ["Amardaha", "Dainiya"],
+      "Triyuga": ["Baliya Chowk", "Birat Chowk Area", "Dulari Chowk", "Goth Gaun City Area", "Khorsane", "Khorsane Chowk", "Lalvitti", "Triyuga Janata Multiple Campus Area", "Udayapur FM Area", "Yalambar Tole"],
+      "Urlabari": ["Chuhade Chowk", "Jaljale Bazaar", "Main Chowk", "Madhumalla Area", "Mangalbare Area", "Puma Chowk"]
+    },
+    "Lumbini Province": {
+      "Banganga": ["4 Number Chowk", "Bangain", "Bodegaun Chowk", "Chappar Gau", "Dhaneshpur", "Gajehada Bus Stop Area", "Jhanda", "Khane Pani Office Area", "Koili Bangai", "Manoharpur", "Motipur - Banganga", "Pipara Bazaar", "Supa Deurali Mandir - Banganga"],
+      "Bardaghat": ["Bardaghat Bus Stop Area", "Basa Basahi Chowk", "Chisapani Hospital Area", "Mohini Cinema Hall Area", "Panchanagar", "Upahar Nagar Park Area"],
+      "Butwal": ["Belbas", "Buddhanagar - Naharpur", "Buspark Area", "Butwal Campus Area", "Butwal Industrial Area", "Chauraha", "Deep Nagar", "Devinagar", "Fulbari", "Golpark", "Haatbazar Area", "Kalika Nagar", "Laxminagar", "Maina Bagar Area", "Majuwa", "Milan Chowk", "Motipur Area", "Nayagaun", "Nepalgunj Road Area", "Ramnagar", "Semlar Area", "Sukhha Nagar", "Tamnagar", "Traffic Chowk Area", "Yogi Kuti Area"],
+      "Dang - Ghorahi": ["Bharatpur Area", "Chaughera Area", "Ghorahi Buspark Area", "Nayabazar Area", "Newroad Area", "Ratanpur Area", "Sahidgate Area", "Traffic Chowk Area", "Tulsipur Chowk Area"],
+      "Dang - Tulsipur": ["Bahini Chowk Area", "BP Chowk Area", "Ganeshpur Area", "Parseni Area", "Tarigaun Area", "Tulsipur Buspark Area"],
+      "Devdaha": ["Bhaluhi", "Charange", "Ghodaha", "Khaireni", "Sitalnagar"],
+      "Kohalpur": ["Babanagar", "Chappargaudi", "Happy Water Park Area", "Kaushila Nagar", "Kohalpur Chowk", "Kohalpur Police Beat No 1 Area", "Madan Chowk", "Manakamana Chowk", "Nepalgunj College Area", "Nepalgunj Medical College Area", "Siddha Nagar"],
+      "Lamahi": ["Bangaun", "Bankatta", "Deukhuri Campus Area", "Gurjihawa", "Lamahi Bus Park Area", "Lamahi Municipality Office Area", "Namai", "Narti", "Shantinagar"],
+      "Lumbini Sanskriti": ["Lumbini Bikas Kosh Area", "Madhubani", "Mahajidiya", "Padariya", "Tenuhawa"],
+      "Nepalgunj": ["Adarsh Nagar Area", "Basudevpur Area", "Belaspur Area", "Bhawanipur Area", "BP Chowk Area", "Dhamboji Area", "Indrapur Area", "Jaisapur Area", "Khaskarkado Area", "Manikapur Area", "Nepalgunj Buspark Area", "Prasapur Area", "Puraina Area", "Udayapur Area"],
+      "Ramgram": ["Bhumahi", "Buddha Chowk", "Durga Mandir", "Parasi Bus Park Area", "Ramagrama Relic Stupa Area", "Ramgram Municipality Office Area"],
+      "Sainamaina": ["Basgadi Area", "Buddhanagar Area", "Murgiya", "Ramapur Area", "Ranibagiya", "Saljhandi Area"],
+      "Shivaraj - Chanauta": ["Chanauta Bus Stop Area", "Halla Nagar", "Jawabhari", "Kharendrapur", "Laxmi Tole", "Samiti Chowk", "Shivapur Haat Bazaar"],
+      "Sidarthanagar - Bhairahawa": ["Bhairahawa Airport Area", "Bhairahawa Buspark Area", "Brishapati College Area", "Buddha Chowk Area", "Darkachua Area", "Devkota Chowk Area", "Durga Colony", "Electricity Office Area", "Milan Chowk Area", "Ranigaun Area", "Universal College Area"],
+      "Sunwal": ["Badera", "Bankatti", "Jyamire", "Kerbani", "Mahakavi Devkota Campus Area", "Sunwal Bus-Station Area", "Sunwal Church Area", "Swathi Area"],
+      "Tausen": ["Bartung Bus Stop Area", "Hotel Srinagar Area", "Lumbini Medical College Area", "Mehaldhara", "Narayansthan Pond Area", "Palpa Eye Hospital Area", "Palpa Hospital Area", "Taksar Tole", "Tansen Bus Park Area", "Tansen Multiple Campus Area", "United Mission Hospital Area"],
+      "Taulihawa - Kapilvastu": ["Jamohara Area", "Kapilvastu Multiple Campus", "Kapilvastu Museum", "Taulihawa Bus Station", "Taulihawa Haat Bazaar", "Tilaurakot"],
+      "Tilotama": ["12 Number Area", "4 Number Area", "Banbatika", "Bhalwari", "Bihuli", "Dinganagar", "Drivertol", "Janakinagar", "Kotihawa", "Manglapur", "Manigram", "Nayamil", "OSHO", "Pathardada", "Sakhwani", "Shankhanagar", "Sitarice Mill"]
+    },
+    "Madhesh Province": {
+      "Bardibas": ["Bardibas Bus Stop Area", "Bardibas Hospital Area", "Baridibas", "Bishwakarma Mandir Area", "Dhalkebar", "Gauridanda", "Lalgadh"],
+      "Birgunj": ["Adarshnagar Area", "Birgunj Buspark Area", "Birgunj Customs Area", "Birta Area", "Brahma Chowk Area", "Chhapkaiya Area", "Chitragupt Area", "Gahawa Mai Area", "Ghadiharwa Pokhari Area", "Ghantaghar Area", "Minabazaar Area", "Murali Area", "Nagwa Pokhari", "New ICP Dryport", "Powerhouse Area", "Pratima Chowk Area", "Radhemai Area", "Ranighat Area", "Resham Kothi Area", "Shreepur Area"],
+      "Chandrapur": ["Buspark Area", "Chapur Bazar", "Laxminiya", "Ramdaiya", "Sakhuwa Bazar", "Sapahi"],
+      "Chhireswarnath": ["Chhireswarnath Durga Chowk", "Chhireswarnath Police Station Area"],
+      "Dhanushadham": ["Bhiman Chowk", "Dhanushadham Municipality Office Area", "Dharapani Chowk", "Govindapur", "Kisanpur", "Kumhara", "Tejnagar", "Yagyabhumi"],
+      "Golbazar": ["Campus Area", "Golbazar Main Chowk", "Mahajan Tole", "Maruti Cement Factory Area", "Naya Choharwa", "Purwa Bus Stop Area"],
+      "Hansapur": ["Belhi Chowk", "Hanspur Municipality Office Area", "Kathapulla", "Suga Nikash"],
+      "Hariwan": ["Aditya Batika Chowk", "Bagmati Karmaiya Area", "Barhathawa", "Chaturbhujeshwar Multiple Campus Area", "Chini Mill Area", "Dabri Bazar", "Dharahara Chowk", "Ganesh Chowk", "Ghurkauli Chowk", "Hariyon Bus Park Area", "Hariyon Park Area", "Jirat Bazar", "Milan Chowk", "Naya Road Chowk Area", "Purwa Bus Park Area", "Putali Chowk Area", "Shankarpur Area", "Sita Palace Hotel Area", "Solti Bazaar", "Sunrise School Area"],
+      "Jaleswor": ["Jaleswor Buddhijibi Chowk", "Mahadev Mandir", "Mahendra Chowk", "Parkauli Chowk", "Pipara", "Shankar Chowk", "Zero Mile"],
+      "Janakpur": ["Bahuarwa Area", "Balmiki Nagar", "Bhanu Chowk", "Brahmapura Chowk", "Janaki Mandir Area", "Janaki Nagar", "Janakpur Airport Area", "Kadam Chowk", "Kishori Nagar", "Kurtha", "Lohana Area", "Madhesh Pradesh Sabha Area", "Mahavir Chowk", "Mahuwa-Kapileswor", "Manharpur", "Mills Area", "Mujelia Area", "Murali Chowk", "Pidari Chowk", "Pulchowk", "Ramanand Chowk", "Ram Chowk", "Thapa Chowk", "Viswakarma Chowk", "Wakil Tole", "Zero Mile"],
+      "Jeetpur - Simara": ["Auraha Area", "Badan Nagar Area", "Bajeni Area", "Barack Area", "Boring Tole", "Hulas Area", "Jagadamba Area", "Jeetpur Bazaar Area", "Kera Dhoka Area", "Laxmi Hall Area", "Narbasti Area", "Nepal Boards Area", "Paani Tanki Area", "Pahadi Tole", "Parwanipur", "Pathlaiya Traffic Chowk", "Rampur Tokani - Dabur Area", "Shanti Tole", "Shiv Parvati Hall Area", "Simara Airport Area", "Simara Chowk Area", "Simara Colony", "Simara Powerhouse Area", "Surya Niwas Area", "Telecom Area"],
+      "Kalaiya": ["Bharat Chowk", "Buspark Area", "CDO Office Area", "Gupta Oil Area", "Hanuman Mandir Area", "Kalaiya Bajar", "Kalaiya Barewa Hospital Area", "Kalaiya Malpot Area", "Motisar", "Parsauni", "Rajaram Campus Area", "Shiksha Office Area", "Siddheshwor Mandir Area", "Vegetable Mart Area"],
+      "Lahan": ["Ganesh Chowk", "Ganeshpur", "ISKCON Area", "J.S. Murarka Campus Area", "Lahan Municipality Office Area", "Lahan Post Office Area", "Lahan Vegetable Market", "Nepal Telecom Area", "Padariya", "Saptarishi Hospital Area", "Sisawani", "Netragunj", "Pattharkot", "Raniganj Chowk"],
+      "Lalbandi": ["Bayalbas Bazaar", "Dhukdhuki FM Area", "Janajyoti Multiple Campus Area", "Jutpani Bus Stop Area", "Kalinjor School Area", "Khatiwoda Chowk", "Laxmipur", "Marin Jane Chowk", "Mejargunj Chautara", "Nawalpur Bazaar", "Netragunj", "Pattharkot", "Raniganj Chowk"],
+      "Malangwa": ["Buspark Area", "Ghamhariya Bus Stop Area", "Jilla Bikash Samati Chowk", "Kabilashi Bus Stop Area", "Katari Chowk", "Krishna Chowk", "Malangwa Nagarpalika Chowk", "Mirchaiya Bazar", "Salempur Chowk", "Shivsagar Chowk"],
+      "Mirchaiya": ["Bhagwatpur", "Fulbariya School Area", "Ghurmi Bazaar", "Katari Chowk", "Mirchaiya Bazar", "Sanstha Chowk"],
+      "Mithila": ["Dhalkebar Chowk", "Dhalkebar Substation Area", "Jamunabas Bus Park Area", "Kushwaha Chowk", "Mithila Municipality Office Area", "Ram Laxman Chowk"],
+      "Mithila Bihari": ["Bhutahi Bazar", "Mauwahi", "Purandaha Bazaar", "Tarapatti Bazaar", "Tarapatti Sirsiya"],
+      "Nagarain": ["Fulgama", "Hospital Chowk", "Jatahi", "Lagmagadhaguthi", "Lagmagadhaguthi Masjid Area", "Thera", "Vegetable Market Area"],
+      "Rajbiraj": ["Airport Area", "Boriya Petrol Pump Area", "Gajendra Narayan Singh Chowk", "Islampur Purni Pokhri", "Karn Park Area", "Maleth", "Nochha Park Area", "Pulchowk", "Rajbiraj Model Campus Area", "Raj Devi Field Area", "Shree Shiv Baba Mandir Area", "Tetri Gachhi Chowk", "Turanti Pokhari Area", "Urban Green Park Area"],
+      "Sabaila": ["Bhathihan Bazaar", "Hanuman Chowk", "Sabaila Bazaar", "Sabaila Municipality Office Area", "Thilla Yaduwa"],
+      "Shahidnagar": ["Adarsha Chowk", "Chandani Chowk", "Hanuman Mandir Area", "Noori Jama Masjid Area", "Shahid Municipality Office Area", "Yadukuha Police Beat Area"]
+    },
+    "Sudurpashchim Province": {
+      "Bhajani": ["Bhajani Trishakti", "Joshipur", "Thapapur - Mahadeuli"],
+      "Bhimdatta-Mahendranagar": ["Bhagatpur", "Bhasi", "Gadda Chauki", "Gobariya", "Mahendranagar Bazar", "Suda"],
+      "Dhangadhi": ["Adarsha Tole Area", "Airport Area", "Badhara Area", "Bishalnagar Area", "Boradadi Area", "Campus Road Area", "Chatakpur Area", "Chauraha Area", "Ganesh Mandir Area", "Hasanpur Area", "Jai Area", "Kailali Customs Office", "Kailali District Court Area", "Khaptad Chowk", "LN Chowk", "Milan Chowk Area", "Om Shanti Tole", "Rajpur Area", "Santoshi Tole Area", "Satkar Chowk Area", "Shivpuri Dham Area", "Taranagar Area", "Tiketal Area", "Uttar Behandi"],
+      "Gauriganga": ["Aambari Galli Area", "Banbehada Bazaar", "Chaumala Bazaar", "Kuchaini", "Mangalpur Bazaar"],
+      "Ghodaghodi": ["Ghoda Ghodi Multiple College Area", "Pahalmanpur Bazaar", "Sukhad Bazaar"],
+      "Godawari": ["Attariya Chowk", "Dixit Nagar", "Geta", "Krishna Mandir Tole", "Lalpur Football Ground Area", "Malakheti", "Shreepur", "Syaule Bazar"],
+      "Lamki Chuha": ["Chisapani Bazaar", "Dododhara Chowk", "Ganeshpur Chowk", "Gulara Bus Park Area", "Lamki Bazaar", "Lamki Zero Mile", "Motipur"],
+      "Tikapur": ["Bijayanagar", "Munuwa", "Narayanpur Chauraha", "Satti Bazaar", "Tikapur Airport Area", "Tikapur Campus Area", "Tikapur Poly Technical Area"]
+    }
+  };
+  
+  // Get cities for selected province
+  const getCitiesForProvince = (province: string) => {
+    return province ? Object.keys(locationData[province] || {}) : [];
+  };
+  
+  // Get areas for selected city
+  const getAreasForCity = (province: string, city: string) => {
+    return province && city ? locationData[province]?.[city] || [] : [];
+  };
+  
+  // Handle province selection
+  const handleProvinceChange = (province: string) => {
+    setSelectedProvince(province);
+    setSelectedCity("");
+    setSelectedArea("");
+  };
+  
+  // Handle city selection
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedArea("");
+  };
   
   // Filter skills based on search query
   const filteredSkills = skillSearchQuery 
@@ -235,10 +423,59 @@ export function EnhancedJobPostingForm({ onCancel, onSuccess, templateId = null 
             </Select>
           </div>
           
-          <div>
-            <Label htmlFor="job-location">Location</Label>
-            <Input id="job-location" placeholder="e.g. Kathmandu, Nepal" />
+        <div className="space-y-4">
+          <Label>Job Location</Label>
+          
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <Label htmlFor="province">Province</Label>
+              <Select value={selectedProvince} onValueChange={handleProvinceChange}>
+                <SelectTrigger id="province">
+                  <SelectValue placeholder="Select Province" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(locationData).map((province) => (
+                    <SelectItem key={province} value={province}>
+                      {province}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="city">City</Label>
+              <Select value={selectedCity} onValueChange={handleCityChange} disabled={!selectedProvince}>
+                <SelectTrigger id="city">
+                  <SelectValue placeholder="Select City" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getCitiesForProvince(selectedProvince).map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="area">Area</Label>
+              <Select value={selectedArea} onValueChange={setSelectedArea} disabled={!selectedCity}>
+                <SelectTrigger id="area">
+                  <SelectValue placeholder="Select Area" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAreasForCity(selectedProvince, selectedCity).map((area) => (
+                    <SelectItem key={area} value={area}>
+                      {area}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+        </div>
         </div>
         
         <div className="grid gap-4 md:grid-cols-2">
